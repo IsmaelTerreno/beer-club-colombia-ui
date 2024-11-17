@@ -4,7 +4,9 @@ import SelectBeer from "@/app/order/components/SelectBeer";
 import { Paper } from "@mui/material";
 
 const BeerOptions = async () => {
-  const response = await fetch("http://localhost:8000/api/v1/stock/current");
+  const response = await fetch("http://localhost:8000/api/v1/stock/current", {
+    cache: "no-store",
+  });
   const responseApi: ResponseApi = await response.json();
   const stock = responseApi.data;
   return (
