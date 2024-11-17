@@ -5,6 +5,7 @@ import {
   Button,
   Divider,
   FormControl,
+  IconButton,
   InputLabel,
   MenuItem,
   Select,
@@ -14,6 +15,8 @@ import {
 import { Grid } from "@mui/system";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import MessageApp, { MessageAppProps } from "@/app/order/components/MessageApp";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
+import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 
 interface SelectBeerProps {
   stock: Stock;
@@ -36,18 +39,20 @@ const SelectBeer: React.FC<SelectBeerProps> = ({ stock }) => {
     const selectedBeer = stock.beers.find(
       (beer) => beer.id === Number(event.target.value),
     );
-    console.log("selectedBeer", selectedBeer);
     setBeerSelected(selectedBeer);
   };
+
   const totalBeers =
     (stock &&
       stock.beers &&
       stock.beers.reduce((acc, beer) => acc + beer.quantity, 0)) ||
     0;
+
   const addBeerToRound = () => {
     const beer = stock.beers.find((beer) => beer.id === beerSelected?.id);
     const isBeerInRound = rounds.find((round) => round.id === beer?.id);
     if (beer && !isBeerInRound && beer.id) {
+      beer.quantity = 1;
       setRounds([...rounds, beer]);
       setMessageApp({
         message: "Added beer to the round.",
@@ -68,6 +73,12 @@ const SelectBeer: React.FC<SelectBeerProps> = ({ stock }) => {
       }
     }
   };
+
+  const updateBeerInRoundPlusOne = (beer: Beer) => {
+    beer.quantity += 1;
+    setRounds([...rounds]);
+  };
+
   return (
     <>
       <MessageApp
@@ -110,8 +121,11 @@ const SelectBeer: React.FC<SelectBeerProps> = ({ stock }) => {
               {stock &&
                 stock.beers &&
                 stock.beers.map((beer) => (
-                  <MenuItem key={beer.id} value={beer.id.toString()}>
-                    {beer.name} - Price: ${beer.price_per_unit} - Available:{" "}
+                  <MenuItem
+                    key={beer.id + "-menu-item"}
+                    value={beer.id.toString()}
+                  >
+                    {beer.name} - Price: ${beer.price_per_unit} - Requested:{" "}
                     {beer.quantity}
                   </MenuItem>
                 ))}
@@ -135,17 +149,39 @@ const SelectBeer: React.FC<SelectBeerProps> = ({ stock }) => {
           <Divider className="mb-5" />
         </Grid>
         <Grid>
-          {rounds.length === 0 && (
-            <Typography variant="body1">
-              No beers selected for the round.
-            </Typography>
-          )}
-          {rounds.map((beer) => (
-            <Typography key={beer.id} variant="body1">
-              {beer.name} - Price: ${beer.price_per_unit} - Available:{" "}
-              {beer.quantity}
-            </Typography>
-          ))}
+          <Grid container flexDirection="column">
+            {rounds.length === 0 && (
+              <Typography variant="body1">
+                No beers selected for the round.
+              </Typography>
+            )}
+            {rounds.map((beer) => (
+              <Grid container flexDirection="row" key={beer.id + "-round-item"}>
+                <Grid size={8}>
+                  <Typography variant="body1">{beer.name}</Typography>
+                  <Typography variant="body1">
+                    Price: ${beer.price_per_unit}
+                  </Typography>
+                  <Typography variant="body1">
+                    Amount requested: {beer.quantity}
+                  </Typography>
+                </Grid>
+                <Grid size={2}>
+                  <IconButton
+                    color="secondary"
+                    onClick={() => updateBeerInRoundPlusOne(beer)}
+                  >
+                    <AddCircleIcon />
+                  </IconButton>
+                </Grid>
+                <Grid size={2}>
+                  <IconButton color="secondary">
+                    <RemoveCircleIcon />
+                  </IconButton>
+                </Grid>
+              </Grid>
+            ))}
+          </Grid>
         </Grid>
       </Grid>
     </>
