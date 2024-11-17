@@ -10,18 +10,18 @@ interface OrderPageProps {}
 const OrderPage: React.FC<OrderPageProps> = () => {
   return (
     <Grid container spacing={4} flexDirection="column" alignItems="center">
-      <Grid>
-        <Typography variant="h1" gutterBottom>
-          Order
+      <Grid size={6}>
+        <Typography variant="h2" gutterBottom>
+          Create Order
         </Typography>
       </Grid>
-      <Grid>
+      <Grid size={6}>
         <BeerOptions />
       </Grid>
-      <Grid>
+      <Grid size={6}>
         <CreateOrderBtn />
       </Grid>
-      <Grid>
+      <Grid size={6}>
         <Link href="/">Back to main</Link>
       </Grid>
     </Grid>
