@@ -78,7 +78,15 @@ const SelectBeer: React.FC<SelectBeerProps> = ({ stock }) => {
     beer.quantity += 1;
     setRounds([...rounds]);
   };
-
+  const updateBeerInRoundMinusOne = (beer: Beer) => {
+    if (beer.quantity > 1) {
+      beer.quantity -= 1;
+      setRounds([...rounds]);
+    } else {
+      const newRounds = rounds.filter((round) => round.id !== beer.id);
+      setRounds(newRounds);
+    }
+  };
   return (
     <>
       <MessageApp
@@ -156,30 +164,36 @@ const SelectBeer: React.FC<SelectBeerProps> = ({ stock }) => {
               </Typography>
             )}
             {rounds.map((beer) => (
-              <Grid container flexDirection="row" key={beer.id + "-round-item"}>
-                <Grid size={8}>
-                  <Typography variant="body1">{beer.name}</Typography>
-                  <Typography variant="body1">
-                    Price: ${beer.price_per_unit}
-                  </Typography>
-                  <Typography variant="body1">
-                    Amount requested: {beer.quantity}
-                  </Typography>
+              <div key={beer.id + "-round-item"}>
+                <Grid container flexDirection="row">
+                  <Grid size={8}>
+                    <Typography variant="body1">{beer.name}</Typography>
+                    <Typography variant="body1">
+                      Price: ${beer.price_per_unit}
+                    </Typography>
+                    <Typography variant="body1">
+                      Amount requested: {beer.quantity}
+                    </Typography>
+                  </Grid>
+                  <Grid size={2}>
+                    <IconButton
+                      color="secondary"
+                      onClick={() => updateBeerInRoundPlusOne(beer)}
+                    >
+                      <AddCircleIcon />
+                    </IconButton>
+                  </Grid>
+                  <Grid size={2}>
+                    <IconButton
+                      color="secondary"
+                      onClick={() => updateBeerInRoundMinusOne(beer)}
+                    >
+                      <RemoveCircleIcon />
+                    </IconButton>
+                  </Grid>
                 </Grid>
-                <Grid size={2}>
-                  <IconButton
-                    color="secondary"
-                    onClick={() => updateBeerInRoundPlusOne(beer)}
-                  >
-                    <AddCircleIcon />
-                  </IconButton>
-                </Grid>
-                <Grid size={2}>
-                  <IconButton color="secondary">
-                    <RemoveCircleIcon />
-                  </IconButton>
-                </Grid>
-              </Grid>
+                <Divider className="mb-5" />
+              </div>
             ))}
           </Grid>
         </Grid>
