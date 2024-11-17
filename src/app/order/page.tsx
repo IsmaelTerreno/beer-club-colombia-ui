@@ -17,7 +17,7 @@ const OrderPage: React.FC<OrderPageProps> = () => {
       className="bg-gradient-to-b from-black to-purple-900"
     >
       <Grid size={6}>
-        <Typography variant="h4" gutterBottom>
+        <Typography variant="h4" gutterBottom className="mt-10">
           Create Order
         </Typography>
       </Grid>
