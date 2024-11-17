@@ -17,6 +17,7 @@ import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import MessageApp, { MessageAppProps } from "@/app/order/components/MessageApp";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
+import SaveIcon from "@mui/icons-material/Save";
 
 interface SelectBeerProps {
   stock: Stock;
@@ -133,7 +134,7 @@ const SelectBeer: React.FC<SelectBeerProps> = ({ stock }) => {
                     key={beer.id + "-menu-item"}
                     value={beer.id.toString()}
                   >
-                    {beer.name} - Price: ${beer.price_per_unit} - Requested:{" "}
+                    {beer.name} - Price: ${beer.price_per_unit} - Available:{" "}
                     {beer.quantity}
                   </MenuItem>
                 ))}
@@ -152,7 +153,7 @@ const SelectBeer: React.FC<SelectBeerProps> = ({ stock }) => {
         </Grid>
         <Grid>
           <Typography variant="h6" gutterBottom>
-            Selected beers for the round
+            Selected beers for the current round
           </Typography>
           <Divider className="mb-5" />
         </Grid>
@@ -196,6 +197,16 @@ const SelectBeer: React.FC<SelectBeerProps> = ({ stock }) => {
               </div>
             ))}
           </Grid>
+        </Grid>
+        <Grid>
+          <Button
+            variant="contained"
+            endIcon={<SaveIcon />}
+            className="mt-10 mb-10"
+            onClick={addBeerToRound}
+          >
+            Save the current round
+          </Button>
         </Grid>
       </Grid>
     </>
