@@ -9,7 +9,13 @@ interface OrderPageProps {}
 
 const OrderPage: React.FC<OrderPageProps> = () => {
   return (
-    <Grid container spacing={4} flexDirection="column" alignItems="center">
+    <Grid
+      container
+      spacing={4}
+      flexDirection="column"
+      alignItems="center"
+      className="bg-gradient-to-b from-black to-purple-900"
+    >
       <Grid size={6}>
         <Typography variant="h2" gutterBottom>
           Create Order

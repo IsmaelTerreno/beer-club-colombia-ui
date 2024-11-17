@@ -37,7 +37,7 @@ const SelectBeer: React.FC<SelectBeerProps> = ({ stock }) => {
             </Typography>
           </Grid>
           <Grid>
-            <Typography variant="overline" gutterBottom>
+            <Typography variant="subtitle1" gutterBottom>
               Last update at {new Date(stock.last_updated).toLocaleString()}
             </Typography>
           </Grid>
