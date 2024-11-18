@@ -15,7 +15,7 @@ export const messageSlice = createSlice({
   // `createSlice` will infer the state type from the `initialState` argument
   initialState,
   reducers: {
-    setMessage: (state, action: PayloadAction<SetMessageAction>) => {
+    setMessageApp: (state, action: PayloadAction<SetMessageAction>) => {
       state.currentMessage = action.payload.currentMessage;
       state.open = action.payload.open;
       state.severity = action.payload.severity;
@@ -26,7 +26,7 @@ export const messageSlice = createSlice({
   },
 });
 
-export const { setMessage, setOpen } = messageSlice.actions;
+export const { setMessageApp, setOpen } = messageSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectCurrentMessageDetails = (state: RootState) => state.message;

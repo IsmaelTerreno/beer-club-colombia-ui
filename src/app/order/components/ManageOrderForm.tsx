@@ -38,6 +38,7 @@ import { Order } from "@/lib/features/app/order.dto";
 import { v1 as uuidV1 } from "uuid";
 import {
   selectCurrentMessageDetails,
+  setMessageApp,
   setOpen,
 } from "@/lib/features/message/messageSlice";
 
@@ -97,10 +98,30 @@ const ManageOrderForm: React.FC<SelectBeerProps> = ({ stock }) => {
     0;
 
   const addBeerToRound = () => {
-    const beer = currentStock?.beers.find(
-      (beer) => beer.id === beerSelected?.id,
-    );
-    dispatch(addBeerToCurrentRound(beer || null));
+    if (beerSelected) {
+      const isBeerInRound = currentRound?.selected_items.find(
+        (item) => item.id_item === beerSelected.id.toString(),
+      );
+      if (isBeerInRound) {
+        dispatch(
+          setMessageApp({
+            currentMessage: "Beer already in the round.",
+            severity: "warning",
+            open: true,
+          }),
+        );
+      } else {
+        dispatch(addBeerToCurrentRound(beerSelected || null));
+        dispatch(
+          setMessageApp({
+            currentMessage: "Beer added to the round.",
+            severity: "success",
+            open: true,
+          }),
+        );
+        setBeerSelected(null);
+      }
+    }
   };
 
   const updateBeerInRoundPlusOne = (beerId: string) => {

@@ -7,7 +7,7 @@ import { Beer } from "@/lib/features/app/beer.dto";
 import { Order } from "@/lib/features/app/order.dto";
 import { ItemsRequestRound } from "@/lib/features/app/items-request-round.dto";
 import { ItemSubtotal } from "@/lib/features/app/item-sub-total.dto"; // Define the initial state using that type
-import { v1 as uuidV1 } from "uuid"; // Define the initial state using that type
+import { v1 as uuidV1 } from "uuid";
 // Define the initial state using that type
 const initialState: OrderState = {
   orders: [],
