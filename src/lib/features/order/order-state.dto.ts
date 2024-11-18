@@ -3,5 +3,5 @@ import { Order } from "@/lib/features/app/order.dto";
 
 export interface OrderState {
   orders: Order[];
-  currentOrder: Order | null;
+  current: Order | null;
 }

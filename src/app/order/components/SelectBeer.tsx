@@ -19,6 +19,8 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import SaveIcon from "@mui/icons-material/Save";
 import { Beer } from "@/lib/features/app/beer.dto";
+import { selectOrders } from "@/lib/features/order/orderSlice";
+import { useSelector } from "react-redux";
 
 interface SelectBeerProps {
   stock: Stock;
@@ -89,6 +91,8 @@ const SelectBeer: React.FC<SelectBeerProps> = ({ stock }) => {
       setRounds(newRounds);
     }
   };
+  const currentOrder = useSelector(selectOrders);
+  console.log(currentOrder);
   return (
     <>
       <MessageApp
