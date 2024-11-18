@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { orderSlice } from "@/lib/features/order/orderSlice";
-import { stockSlice } from "@/lib/features/order/stockSlice";
+import { stockSlice } from "@/lib/features/stock/stockSlice";
 
 export const makeStore = () => {
   return configureStore({

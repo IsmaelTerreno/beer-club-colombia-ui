@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../store";
 import { SetStockAction } from "@/lib/features/app/set-stock-action.dto";
-import { StockState } from "@/lib/features/order/stock-state.dto"; // Define the initial state using that type
+import { StockState } from "@/lib/features/stock/stock-state.dto"; // Define the initial state using that type
 
 // Define the initial state using that type
 const initialState: StockState = {
