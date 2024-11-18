@@ -22,10 +22,12 @@ import { Beer } from "@/lib/features/app/beer.dto";
 import {
   selectCurrentBeer,
   setCurrentBeer,
+  setCurrentOrder,
 } from "@/lib/features/order/orderSlice";
 import { useSelector } from "react-redux";
 import { setStock } from "@/lib/features/stock/stockSlice";
 import { useAppDispatch } from "@/lib/hooks";
+import { Order } from "@/lib/features/app/order.dto";
 
 interface SelectBeerProps {
   stock: Stock | null | undefined;
@@ -36,7 +38,24 @@ const SelectBeer: React.FC<SelectBeerProps> = ({ stock }) => {
   useEffect(() => {
     dispatch(setStock({ stock: stock || null }));
     console.log("Stock updated");
-  }, [stock, dispatch]);
+    const newBlankOrder: Order = {
+      id: 1,
+      created: new Date().toLocaleString(),
+      paid: false,
+      subtotal: 0,
+      taxes: 0,
+      discounts: 0,
+      total_to_pay: 0,
+      cash_tendered: 0,
+      cash_returned: 0,
+      details: "",
+      rounds: [],
+      option_items: [],
+      processed_items: [],
+      status: "pending",
+    };
+    dispatch(setCurrentOrder(newBlankOrder));
+  }, [stock, dispatch, setCurrentOrder]);
   const beerSelected = useSelector(selectCurrentBeer);
   const setBeerSelected = (beer: Beer | null) => dispatch(setCurrentBeer(beer));
 

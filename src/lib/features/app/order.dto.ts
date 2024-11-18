@@ -4,7 +4,7 @@ import { ItemSubtotal } from "@/lib/features/app/item-sub-total.dto";
 
 export interface Order {
   id: number;
-  created: Date;
+  created: string;
   paid: boolean;
   subtotal: number;
   taxes: number;
