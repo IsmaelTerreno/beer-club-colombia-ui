@@ -4,14 +4,14 @@ import { Alert, Snackbar, SnackbarCloseReason } from "@mui/material";
 export interface MessageAppProps {
   message: string;
   severity: "success" | "error" | "warning" | "info";
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  onClose: (isOpen: boolean) => void;
   open: boolean;
 }
 
 const MessageApp: React.FC<MessageAppProps> = ({
   message,
   severity,
-  setOpen,
+  onClose,
   open,
 }) => {
   const handleClose = (
@@ -21,7 +21,7 @@ const MessageApp: React.FC<MessageAppProps> = ({
     if (reason === "clickaway") {
       return;
     }
-    setOpen(false);
+    onClose(false);
   };
   return (
     <Snackbar open={open} onClose={handleClose} autoHideDuration={4000}>

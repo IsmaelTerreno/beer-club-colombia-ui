@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { Grid } from "@mui/system";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
-import MessageApp, { MessageAppProps } from "@/app/order/components/MessageApp";
+import MessageApp from "@/app/order/components/MessageApp";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import SaveIcon from "@mui/icons-material/Save";
@@ -36,6 +36,10 @@ import { selectCurrentStock, setStock } from "@/lib/features/stock/stockSlice";
 import { useAppDispatch } from "@/lib/hooks";
 import { Order } from "@/lib/features/app/order.dto";
 import { v1 as uuidV1 } from "uuid";
+import {
+  selectCurrentMessageDetails,
+  setOpen,
+} from "@/lib/features/message/messageSlice";
 
 interface SelectBeerProps {
   stock: Stock | null | undefined;
@@ -77,13 +81,7 @@ const ManageOrderForm: React.FC<SelectBeerProps> = ({ stock }) => {
   const currentRound = useSelector(selectCurrentRound);
   const currentOrder = useSelector(selectCurrentOrder);
   const setBeerSelected = (beer: Beer | null) => dispatch(setCurrentBeer(beer));
-  const [open, setOpen] = React.useState(false);
-  const [messageApp, setMessageApp] = React.useState<MessageAppProps>({
-    message: "",
-    severity: "info",
-    setOpen,
-    open: false,
-  });
+  const currentMessageDetails = useSelector(selectCurrentMessageDetails);
 
   const handleChange = (event: SelectChangeEvent) => {
     const selectedBeer = currentStock?.beers.find(
@@ -128,13 +126,16 @@ const ManageOrderForm: React.FC<SelectBeerProps> = ({ stock }) => {
     const beer = currentStock?.beers.find((beer) => beer.id.toString() === id);
     return beer?.name || "";
   };
+  const setMessageOpen = (isOpen: boolean) => {
+    dispatch(setOpen(isOpen));
+  };
   return (
     <>
       <MessageApp
-        message={messageApp.message}
-        severity={messageApp.severity}
-        setOpen={setOpen}
-        open={open}
+        message={currentMessageDetails.currentMessage || ""}
+        severity={currentMessageDetails.severity}
+        onClose={() => setMessageOpen(false)}
+        open={currentMessageDetails.open}
       />
       <Grid container flexDirection="column">
         <Grid>

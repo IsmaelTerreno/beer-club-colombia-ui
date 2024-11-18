@@ -20,13 +20,15 @@ export const messageSlice = createSlice({
       state.open = action.payload.open;
       state.severity = action.payload.severity;
     },
+    setOpen: (state, action: PayloadAction<boolean>) => {
+      state.open = action.payload;
+    },
   },
 });
 
-export const { setMessage } = messageSlice.actions;
+export const { setMessage, setOpen } = messageSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
-export const selectCurrentMessage = (state: RootState) =>
-  state.message.currentMessage;
+export const selectCurrentMessageDetails = (state: RootState) => state.message;
 
 export default messageSlice.reducer;
