@@ -23,7 +23,7 @@ import { selectOrders } from "@/lib/features/order/orderSlice";
 import { useSelector } from "react-redux";
 
 interface SelectBeerProps {
-  stock: Stock;
+  stock: Stock | null;
 }
 
 const SelectBeer: React.FC<SelectBeerProps> = ({ stock }) => {
@@ -40,7 +40,7 @@ const SelectBeer: React.FC<SelectBeerProps> = ({ stock }) => {
   });
 
   const handleChange = (event: SelectChangeEvent) => {
-    const selectedBeer = stock.beers.find(
+    const selectedBeer = stock?.beers.find(
       (beer) => beer.id === Number(event.target.value),
     );
     setBeerSelected(selectedBeer);
@@ -53,7 +53,7 @@ const SelectBeer: React.FC<SelectBeerProps> = ({ stock }) => {
     0;
 
   const addBeerToRound = () => {
-    const beer = stock.beers.find((beer) => beer.id === beerSelected?.id);
+    const beer = stock?.beers.find((beer) => beer.id === beerSelected?.id);
     const isBeerInRound = rounds.find((round) => round.id === beer?.id);
     if (beer && !isBeerInRound && beer.id) {
       beer.quantity = 1;
@@ -112,7 +112,8 @@ const SelectBeer: React.FC<SelectBeerProps> = ({ stock }) => {
             <Grid>
               <Typography variant="subtitle1" gutterBottom>
                 Last Stock update at{" "}
-                {new Date(stock.last_updated).toLocaleString()}
+                {stock?.last_updated &&
+                  new Date(stock.last_updated).toLocaleString()}
               </Typography>
             </Grid>
           </Grid>
