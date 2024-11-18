@@ -1,5 +1,5 @@
 export interface UpdateBeerQuantityMinusOneInOrderIdAndRoundIdAction {
-  id_order: number;
-  id_round: number;
-  id_beer: number;
+  id_order: string;
+  id_round: string;
+  id_beer: string;
 }

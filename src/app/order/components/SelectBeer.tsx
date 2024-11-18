@@ -20,14 +20,21 @@ import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import SaveIcon from "@mui/icons-material/Save";
 import { Beer } from "@/lib/features/app/beer.dto";
 import {
+  addBeerToCurrentRound,
   selectCurrentBeer,
+  selectCurrentOrder,
+  selectCurrentRound,
+  selectCurrentRounds,
   setCurrentBeer,
   setCurrentOrder,
+  setCurrentRound,
+  updateBeerQuantityPlusOneInOrderIdAndRoundId,
 } from "@/lib/features/order/orderSlice";
 import { useSelector } from "react-redux";
 import { setStock } from "@/lib/features/stock/stockSlice";
 import { useAppDispatch } from "@/lib/hooks";
 import { Order } from "@/lib/features/app/order.dto";
+import { v1 as uuidV1 } from "uuid";
 
 interface SelectBeerProps {
   stock: Stock | null | undefined;
@@ -37,9 +44,9 @@ const SelectBeer: React.FC<SelectBeerProps> = ({ stock }) => {
   const dispatch = useAppDispatch();
   useEffect(() => {
     dispatch(setStock({ stock: stock || null }));
-    console.log("Stock updated");
+    const newId = uuidV1();
     const newBlankOrder: Order = {
-      id: 1,
+      id: newId,
       created: new Date().toLocaleString(),
       paid: false,
       subtotal: 0,
@@ -55,8 +62,18 @@ const SelectBeer: React.FC<SelectBeerProps> = ({ stock }) => {
       status: "pending",
     };
     dispatch(setCurrentOrder(newBlankOrder));
-  }, [stock, dispatch, setCurrentOrder]);
+    const newIdRound = uuidV1();
+    const currentRoundBlank = {
+      id: newIdRound,
+      selected_items: [],
+      created_at: new Date().toLocaleString(),
+    };
+    dispatch(setCurrentRound(currentRoundBlank));
+  }, [stock]);
   const beerSelected = useSelector(selectCurrentBeer);
+  const currentRounds = useSelector(selectCurrentRounds);
+  const currentRound = useSelector(selectCurrentRound);
+  const currentOrder = useSelector(selectCurrentOrder);
   const setBeerSelected = (beer: Beer | null) => dispatch(setCurrentBeer(beer));
 
   const [rounds, setRounds] = React.useState<Beer[]>([]);
@@ -70,7 +87,7 @@ const SelectBeer: React.FC<SelectBeerProps> = ({ stock }) => {
 
   const handleChange = (event: SelectChangeEvent) => {
     const selectedBeer = stock?.beers.find(
-      (beer) => beer.id === Number(event.target.value),
+      (beer) => beer.id.toString() === event.target.value,
     );
     setBeerSelected(selectedBeer || null);
   };
@@ -83,42 +100,34 @@ const SelectBeer: React.FC<SelectBeerProps> = ({ stock }) => {
 
   const addBeerToRound = () => {
     const beer = stock?.beers.find((beer) => beer.id === beerSelected?.id);
-    const isBeerInRound = rounds.find((round) => round.id === beer?.id);
-    if (beer && !isBeerInRound && beer.id) {
-      beer.quantity = 1;
-      setRounds([...rounds, beer]);
-      setMessageApp({
-        message: "Added beer to the round.",
-        severity: "info",
-        setOpen,
-        open,
-      });
-      setOpen(true);
-    } else {
-      if (beer?.id) {
-        setMessageApp({
-          message: "Beer already in the round.",
-          severity: "warning",
-          setOpen,
-          open,
-        });
-        setOpen(true);
-      }
-    }
+    dispatch(addBeerToCurrentRound(beer || null));
   };
 
-  const updateBeerInRoundPlusOne = (beer: Beer) => {
-    beer.quantity += 1;
-    setRounds([...rounds]);
+  const updateBeerInRoundPlusOne = (beerId: string) => {
+    dispatch(
+      updateBeerQuantityPlusOneInOrderIdAndRoundId({
+        id_order: currentOrder?.id || "",
+        id_round: currentRound?.id || "",
+        id_beer: beerId,
+      }),
+    );
   };
-  const updateBeerInRoundMinusOne = (beer: Beer) => {
-    if (beer.quantity > 1) {
-      beer.quantity -= 1;
-      setRounds([...rounds]);
-    } else {
-      const newRounds = rounds.filter((round) => round.id !== beer.id);
-      setRounds(newRounds);
-    }
+  const updateBeerInRoundMinusOne = (beerId: string) => {
+    currentRound?.selected_items.map((item) => {
+      if (item.id_item === beerId && item.quantity > 1) {
+        item.quantity -= 1;
+      } else {
+        currentRound.selected_items = currentRound.selected_items.filter(
+          (item) => item.id_item !== beerId,
+        );
+      }
+    });
+    dispatch(setCurrentRound(currentRound));
+  };
+
+  const getBeerLabelById = (id: string) => {
+    const beer = stock?.beers.find((beer) => beer.id === id);
+    return beer?.name || "";
   };
   return (
     <>
@@ -156,7 +165,7 @@ const SelectBeer: React.FC<SelectBeerProps> = ({ stock }) => {
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
-              value={beerSelected ? beerSelected.id.toString() : ""}
+              value={beerSelected ? beerSelected.id : ""}
               label="Select Beer"
               onChange={handleChange}
             >
@@ -192,41 +201,41 @@ const SelectBeer: React.FC<SelectBeerProps> = ({ stock }) => {
         </Grid>
         <Grid>
           <Grid container flexDirection="column">
-            {rounds.length === 0 && (
+            {currentRounds.length === 0 && (
               <Typography variant="body1">
                 No beers selected for the round.
               </Typography>
             )}
-            {rounds.map((beer) => (
-              <div key={beer.id + "-round-item"}>
-                <Grid container flexDirection="row">
-                  <Grid size={8}>
-                    <Typography variant="body1">{beer.name}</Typography>
-                    <Typography variant="body1">
-                      Price: ${beer.price_per_unit}
-                    </Typography>
-                    <Typography variant="body1">
-                      Amount requested: {beer.quantity}
-                    </Typography>
-                  </Grid>
-                  <Grid size={2}>
-                    <IconButton
-                      color="secondary"
-                      onClick={() => updateBeerInRoundPlusOne(beer)}
-                    >
-                      <AddCircleIcon />
-                    </IconButton>
-                  </Grid>
-                  <Grid size={2}>
-                    <IconButton
-                      color="secondary"
-                      onClick={() => updateBeerInRoundMinusOne(beer)}
-                    >
-                      <RemoveCircleIcon />
-                    </IconButton>
-                  </Grid>
-                </Grid>
-                <Divider className="mb-5" />
+            {currentRounds.map((round) => (
+              <div key={round.id + "-round-record"}>
+                {round.selected_items.map((item) => (
+                  <div key={item.id_item + "-item-record"}>
+                    <Grid container flexDirection="row">
+                      <Grid>
+                        <Typography variant="body1">
+                          {getBeerLabelById(item.id_item)} - Price: $
+                          {item.price_per_unit} - Quantity: {item.quantity}
+                        </Typography>
+                      </Grid>
+                      <Grid>
+                        <IconButton
+                          aria-label="add"
+                          onClick={() => updateBeerInRoundPlusOne(item.id_item)}
+                        >
+                          <AddCircleIcon />
+                        </IconButton>
+                        <IconButton
+                          aria-label="remove"
+                          onClick={() =>
+                            updateBeerInRoundMinusOne(item.id_item)
+                          }
+                        >
+                          <RemoveCircleIcon />
+                        </IconButton>
+                      </Grid>
+                    </Grid>
+                  </div>
+                ))}
               </div>
             ))}
           </Grid>

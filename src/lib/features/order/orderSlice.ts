@@ -6,13 +6,16 @@ import { RemoveRoundInOrderAction } from "@/lib/features/app/remove-round-in-ord
 import { UpdateBeerQuantityPlusOneInOrderIdAndRoundIdAction } from "@/lib/features/app/update-beer-quantity-plus-one-in-order-Id-and-round-Id-action.dto";
 import { UpdateBeerQuantityMinusOneInOrderIdAndRoundIdAction } from "@/lib/features/app/update-beer-quantity-minus-one-in-order-Id-and-round-Id-action.dto";
 import { Beer } from "@/lib/features/app/beer.dto";
-import { Order } from "@/lib/features/app/order.dto"; // Define the initial state using that type
-
+import { Order } from "@/lib/features/app/order.dto";
+import { ItemsRequestRound } from "@/lib/features/app/items-request-round.dto";
+import { ItemSubtotal } from "@/lib/features/app/item-sub-total.dto"; // Define the initial state using that type
+import { v1 as uuidV1 } from "uuid";
 // Define the initial state using that type
 const initialState: OrderState = {
   orders: [],
   currentOrder: null,
   currentBeer: null,
+  currentRound: null,
   currentRounds: [],
 };
 
@@ -86,6 +89,46 @@ export const orderSlice = createSlice({
     setCurrentOrder: (state, action: PayloadAction<Order>) => {
       state.currentOrder = action.payload;
     },
+    setCurrentRound: (
+      state,
+      action: PayloadAction<ItemsRequestRound | null>,
+    ) => {
+      state.currentRound = action.payload;
+    },
+    addBeerToCurrentRound: (state, action: PayloadAction<Beer | null>) => {
+      const beer = action.payload;
+      if (beer) {
+        const isBeerInRound = state.currentRound?.selected_items.find(
+          (item) => item.id_item === beer.id.toString(),
+        );
+        if (!isBeerInRound && beer.id) {
+          const newId = uuidV1();
+          const newItemSubtotal: ItemSubtotal = {
+            id: newId,
+            id_item: beer.id.toString(),
+            quantity: 1,
+            price_per_unit: beer.price_per_unit,
+            sub_total: beer.price_per_unit,
+          };
+          state.currentRound?.selected_items.push(newItemSubtotal);
+          // setMessageApp({
+          //   message: "Added beer to the round.",
+          //   severity: "info",
+          //   setOpen,
+          //   open,
+          // });
+          // setOpen(true);
+        } else {
+          // setMessageApp({
+          //   message: "Beer already in the round.",
+          //   severity: "warning",
+          //   setOpen,
+          //   open,
+          // });
+          // setOpen(true);
+        }
+      }
+    },
   },
 });
 
@@ -96,6 +139,8 @@ export const {
   updateBeerQuantityMinusOneInOrderIdAndRoundId,
   setCurrentBeer,
   setCurrentOrder,
+  setCurrentRound,
+  addBeerToCurrentRound,
 } = orderSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
@@ -103,5 +148,9 @@ export const selectOrders = (state: RootState) => state.order.orders;
 export const selectCurrentOrder = (state: RootState) =>
   state.order.currentOrder;
 export const selectCurrentBeer = (state: RootState) => state.order.currentBeer;
+export const selectCurrentRound = (state: RootState) =>
+  state.order.currentRound;
+export const selectCurrentRounds = (state: RootState) =>
+  state.order.currentRounds;
 
 export default orderSlice.reducer;

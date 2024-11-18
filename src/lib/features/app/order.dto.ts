@@ -3,7 +3,7 @@ import { ItemsRequestRound } from "@/lib/features/app/items-request-round.dto";
 import { ItemSubtotal } from "@/lib/features/app/item-sub-total.dto";
 
 export interface Order {
-  id: number;
+  id: string;
   created: string;
   paid: boolean;
   subtotal: number;

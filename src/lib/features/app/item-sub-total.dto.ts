@@ -1,6 +1,6 @@
 export interface ItemSubtotal {
-  id: number;
-  id_item: number;
+  id: string;
+  id_item: string;
   quantity: number;
   price_per_unit: number;
   sub_total: number;

@@ -1,5 +1,5 @@
 export interface Beer {
-  id: number;
+  id: string;
   name: string;
   price_per_unit: number;
   quantity: number;
