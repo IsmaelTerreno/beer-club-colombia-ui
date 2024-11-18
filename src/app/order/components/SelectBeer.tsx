@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Beer, Stock } from "@/app/order/model.dto";
+import { Stock } from "@/lib/features/app/stock.dto";
 import {
   Button,
   Divider,
@@ -18,6 +18,7 @@ import MessageApp, { MessageAppProps } from "@/app/order/components/MessageApp";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import SaveIcon from "@mui/icons-material/Save";
+import { Beer } from "@/lib/features/app/beer.dto";
 
 interface SelectBeerProps {
   stock: Stock;
