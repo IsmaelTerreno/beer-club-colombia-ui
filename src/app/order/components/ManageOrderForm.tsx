@@ -158,6 +158,12 @@ const ManageOrderForm: React.FC<SelectBeerProps> = ({ stock }) => {
           <Divider className="mb-5" />
         </Grid>
         <Grid>
+          <Typography variant="h6" gutterBottom>
+            Beers to add to the round
+          </Typography>
+          <Divider className="mb-5" />
+        </Grid>
+        <Grid>
           <FormControl fullWidth>
             <InputLabel id="demo-simple-select-label">
               Beer selection
@@ -195,7 +201,7 @@ const ManageOrderForm: React.FC<SelectBeerProps> = ({ stock }) => {
         </Grid>
         <Grid>
           <Typography variant="h6" gutterBottom>
-            Selected beers for the current round
+            Current round details
           </Typography>
           <Divider className="mb-5" />
         </Grid>
