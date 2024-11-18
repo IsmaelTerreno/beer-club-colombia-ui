@@ -5,7 +5,7 @@ import { StockState } from "@/lib/features/stock/stock-state.dto"; // Define the
 
 // Define the initial state using that type
 const initialState: StockState = {
-  stock: null,
+  currentStock: null,
 };
 
 export const stockSlice = createSlice({
@@ -14,7 +14,7 @@ export const stockSlice = createSlice({
   initialState,
   reducers: {
     setStock: (state, action: PayloadAction<SetStockAction>) => {
-      state.stock = action.payload.stock;
+      state.currentStock = action.payload.stock;
     },
   },
 });
@@ -22,6 +22,7 @@ export const stockSlice = createSlice({
 export const { setStock } = stockSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
-export const selectStock = (state: RootState) => state.stock.stock;
+export const selectCurrentStock = (state: RootState) =>
+  state.stock.currentStock;
 
 export default stockSlice.reducer;

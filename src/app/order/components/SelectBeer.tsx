@@ -28,10 +28,11 @@ import {
   setCurrentBeer,
   setCurrentOrder,
   setCurrentRound,
+  updateBeerQuantityMinusOneInOrderIdAndRoundId,
   updateBeerQuantityPlusOneInOrderIdAndRoundId,
 } from "@/lib/features/order/orderSlice";
 import { useSelector } from "react-redux";
-import { setStock } from "@/lib/features/stock/stockSlice";
+import { selectCurrentStock, setStock } from "@/lib/features/stock/stockSlice";
 import { useAppDispatch } from "@/lib/hooks";
 import { Order } from "@/lib/features/app/order.dto";
 import { v1 as uuidV1 } from "uuid";
@@ -70,13 +71,12 @@ const SelectBeer: React.FC<SelectBeerProps> = ({ stock }) => {
     };
     dispatch(setCurrentRound(currentRoundBlank));
   }, [stock]);
+  const currentStock = useSelector(selectCurrentStock);
   const beerSelected = useSelector(selectCurrentBeer);
   const currentRounds = useSelector(selectCurrentRounds);
   const currentRound = useSelector(selectCurrentRound);
   const currentOrder = useSelector(selectCurrentOrder);
   const setBeerSelected = (beer: Beer | null) => dispatch(setCurrentBeer(beer));
-
-  const [rounds, setRounds] = React.useState<Beer[]>([]);
   const [open, setOpen] = React.useState(false);
   const [messageApp, setMessageApp] = React.useState<MessageAppProps>({
     message: "",
@@ -86,20 +86,22 @@ const SelectBeer: React.FC<SelectBeerProps> = ({ stock }) => {
   });
 
   const handleChange = (event: SelectChangeEvent) => {
-    const selectedBeer = stock?.beers.find(
+    const selectedBeer = currentStock?.beers.find(
       (beer) => beer.id.toString() === event.target.value,
     );
     setBeerSelected(selectedBeer || null);
   };
 
   const totalBeers =
-    (stock &&
-      stock.beers &&
-      stock.beers.reduce((acc, beer) => acc + beer.quantity, 0)) ||
+    (currentStock &&
+      currentStock.beers &&
+      currentStock.beers.reduce((acc, beer) => acc + beer.quantity, 0)) ||
     0;
 
   const addBeerToRound = () => {
-    const beer = stock?.beers.find((beer) => beer.id === beerSelected?.id);
+    const beer = currentStock?.beers.find(
+      (beer) => beer.id === beerSelected?.id,
+    );
     dispatch(addBeerToCurrentRound(beer || null));
   };
 
@@ -113,20 +115,17 @@ const SelectBeer: React.FC<SelectBeerProps> = ({ stock }) => {
     );
   };
   const updateBeerInRoundMinusOne = (beerId: string) => {
-    currentRound?.selected_items.map((item) => {
-      if (item.id_item === beerId && item.quantity > 1) {
-        item.quantity -= 1;
-      } else {
-        currentRound.selected_items = currentRound.selected_items.filter(
-          (item) => item.id_item !== beerId,
-        );
-      }
-    });
-    dispatch(setCurrentRound(currentRound));
+    dispatch(
+      updateBeerQuantityMinusOneInOrderIdAndRoundId({
+        id_order: currentOrder?.id || "",
+        id_round: currentRound?.id || "",
+        id_beer: beerId,
+      }),
+    );
   };
 
   const getBeerLabelById = (id: string) => {
-    const beer = stock?.beers.find((beer) => beer.id === id);
+    const beer = currentStock?.beers.find((beer) => beer.id.toString() === id);
     return beer?.name || "";
   };
   return (
@@ -148,8 +147,8 @@ const SelectBeer: React.FC<SelectBeerProps> = ({ stock }) => {
             <Grid>
               <Typography variant="subtitle1" gutterBottom>
                 Last Stock update at{" "}
-                {stock?.last_updated &&
-                  new Date(stock.last_updated).toLocaleString()}
+                {currentStock?.last_updated &&
+                  new Date(currentStock.last_updated).toLocaleString()}
               </Typography>
             </Grid>
           </Grid>
@@ -169,9 +168,9 @@ const SelectBeer: React.FC<SelectBeerProps> = ({ stock }) => {
               label="Select Beer"
               onChange={handleChange}
             >
-              {stock &&
-                stock.beers &&
-                stock.beers.map((beer) => (
+              {currentStock &&
+                currentStock.beers &&
+                currentStock.beers.map((beer) => (
                   <MenuItem
                     key={beer.id + "-menu-item"}
                     value={beer.id.toString()}

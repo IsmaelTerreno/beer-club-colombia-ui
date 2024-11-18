@@ -111,6 +111,9 @@ export const orderSlice = createSlice({
             sub_total: beer.price_per_unit,
           };
           state.currentRound?.selected_items.push(newItemSubtotal);
+          if (state.currentRounds.length === 0 && state.currentRound) {
+            state.currentRounds.push(state.currentRound);
+          }
           // setMessageApp({
           //   message: "Added beer to the round.",
           //   severity: "info",
