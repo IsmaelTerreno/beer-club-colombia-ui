@@ -4,12 +4,14 @@ import { OrderState } from "@/lib/features/order/order-state.dto";
 import { AddRoundInOrderAction } from "@/lib/features/app/add-round-in-order-action.dto";
 import { RemoveRoundInOrderAction } from "@/lib/features/app/remove-round-in-order-action.dto";
 import { UpdateBeerQuantityPlusOneInOrderIdAndRoundIdAction } from "@/lib/features/app/update-beer-quantity-plus-one-in-order-Id-and-round-Id-action.dto";
-import { UpdateBeerQuantityMinusOneInOrderIdAndRoundIdAction } from "@/lib/features/app/update-beer-quantity-minus-one-in-order-Id-and-round-Id-action.dto"; // Define the initial state using that type
+import { UpdateBeerQuantityMinusOneInOrderIdAndRoundIdAction } from "@/lib/features/app/update-beer-quantity-minus-one-in-order-Id-and-round-Id-action.dto";
+import { Beer } from "@/lib/features/app/beer.dto"; // Define the initial state using that type
 
 // Define the initial state using that type
 const initialState: OrderState = {
   orders: [],
-  current: null,
+  currentOrder: null,
+  currentBeer: null,
 };
 
 export const orderSlice = createSlice({
@@ -76,6 +78,9 @@ export const orderSlice = createSlice({
         }
       }
     },
+    setCurrentBeer: (state, action: PayloadAction<Beer | null>) => {
+      state.currentBeer = action.payload;
+    },
   },
 });
 
@@ -84,10 +89,13 @@ export const {
   removeRoundInOrderId,
   updateBeerQuantityPlusOneInOrderIdAndRoundId,
   updateBeerQuantityMinusOneInOrderIdAndRoundId,
+  setCurrentBeer,
 } = orderSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectOrders = (state: RootState) => state.order.orders;
-export const selectCurrentOrder = (state: RootState) => state.order.current;
+export const selectCurrentOrder = (state: RootState) =>
+  state.order.currentOrder;
+export const selectCurrentBeer = (state: RootState) => state.order.currentBeer;
 
 export default orderSlice.reducer;

@@ -1,8 +1,8 @@
 import React from "react";
-import { Stock } from "@/lib/features/app/stock.dto";
 import SelectBeer from "@/app/order/components/SelectBeer";
 import { Paper } from "@mui/material";
 import { ResponseApi } from "@/lib/features/app/response-api.dto";
+import { Stock } from "@/lib/features/app/stock.dto";
 
 const BeerOptions = async () => {
   const response = await fetch("http://localhost:8000/api/v1/stock/current", {

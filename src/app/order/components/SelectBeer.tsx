@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { Stock } from "@/lib/features/app/stock.dto";
 import {
   Button,
@@ -19,17 +19,27 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import SaveIcon from "@mui/icons-material/Save";
 import { Beer } from "@/lib/features/app/beer.dto";
-import { selectOrders } from "@/lib/features/order/orderSlice";
+import {
+  selectCurrentBeer,
+  setCurrentBeer,
+} from "@/lib/features/order/orderSlice";
 import { useSelector } from "react-redux";
+import { setStock } from "@/lib/features/stock/stockSlice";
+import { useAppDispatch } from "@/lib/hooks";
 
 interface SelectBeerProps {
-  stock: Stock | null;
+  stock: Stock | null | undefined;
 }
 
 const SelectBeer: React.FC<SelectBeerProps> = ({ stock }) => {
-  const [beerSelected, setBeerSelected] = React.useState<Beer | undefined>(
-    undefined,
-  );
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(setStock({ stock: stock || null }));
+    console.log("Stock updated");
+  }, [stock, dispatch]);
+  const beerSelected = useSelector(selectCurrentBeer);
+  const setBeerSelected = (beer: Beer | null) => dispatch(setCurrentBeer(beer));
+
   const [rounds, setRounds] = React.useState<Beer[]>([]);
   const [open, setOpen] = React.useState(false);
   const [messageApp, setMessageApp] = React.useState<MessageAppProps>({
@@ -43,7 +53,7 @@ const SelectBeer: React.FC<SelectBeerProps> = ({ stock }) => {
     const selectedBeer = stock?.beers.find(
       (beer) => beer.id === Number(event.target.value),
     );
-    setBeerSelected(selectedBeer);
+    setBeerSelected(selectedBeer || null);
   };
 
   const totalBeers =
@@ -91,8 +101,6 @@ const SelectBeer: React.FC<SelectBeerProps> = ({ stock }) => {
       setRounds(newRounds);
     }
   };
-  const currentOrder = useSelector(selectOrders);
-  console.log(currentOrder);
   return (
     <>
       <MessageApp
