@@ -24,6 +24,7 @@ import {
   selectCurrentBeer,
   selectCurrentOrder,
   selectCurrentRound,
+  selectItemSubtotalsInCurrentRound,
   selectRounds,
   setCurrentBeer,
   setCurrentOrder,
@@ -73,8 +74,9 @@ const SelectBeer: React.FC<SelectBeerProps> = ({ stock }) => {
   }, [stock]);
   const currentStock = useSelector(selectCurrentStock);
   const beerSelected = useSelector(selectCurrentBeer);
-  const currentRounds = useSelector(selectRounds);
+  const beerRounds = useSelector(selectRounds);
   const currentRound = useSelector(selectCurrentRound);
+  const currentRoundItems = useSelector(selectItemSubtotalsInCurrentRound);
   const currentOrder = useSelector(selectCurrentOrder);
   const setBeerSelected = (beer: Beer | null) => dispatch(setCurrentBeer(beer));
   const [open, setOpen] = React.useState(false);
@@ -200,43 +202,38 @@ const SelectBeer: React.FC<SelectBeerProps> = ({ stock }) => {
         </Grid>
         <Grid>
           <Grid container flexDirection="column">
-            {currentRounds.length === 0 && (
+            {currentRound && currentRound.selected_items.length === 0 && (
               <Typography variant="body1">
-                No beers selected for the round.
+                No beers selected for current the round.
               </Typography>
             )}
-            {currentRounds.map((round) => (
-              <div key={round.id + "-round-record"}>
-                {round.selected_items.map((item) => (
-                  <div key={item.id_item + "-item-record"}>
-                    <Grid container flexDirection="row">
-                      <Grid>
-                        <Typography variant="body1">
-                          {getBeerLabelById(item.id_item)} - Price: $
-                          {item.price_per_unit} - Quantity: {item.quantity}
-                        </Typography>
-                      </Grid>
-                      <Grid>
-                        <IconButton
-                          aria-label="add"
-                          onClick={() => updateBeerInRoundPlusOne(item.id_item)}
-                        >
-                          <AddCircleIcon />
-                        </IconButton>
-                        <IconButton
-                          aria-label="remove"
-                          onClick={() =>
-                            updateBeerInRoundMinusOne(item.id_item)
-                          }
-                        >
-                          <RemoveCircleIcon />
-                        </IconButton>
-                      </Grid>
+            {currentRound &&
+              currentRound.selected_items.map((item) => (
+                <div key={item.id_item + "-item-record"}>
+                  <Grid container flexDirection="row">
+                    <Grid>
+                      <Typography variant="body1">
+                        {getBeerLabelById(item.id_item)} - Price: $
+                        {item.price_per_unit} - Quantity: {item.quantity}
+                      </Typography>
                     </Grid>
-                  </div>
-                ))}
-              </div>
-            ))}
+                    <Grid>
+                      <IconButton
+                        aria-label="add"
+                        onClick={() => updateBeerInRoundPlusOne(item.id_item)}
+                      >
+                        <AddCircleIcon />
+                      </IconButton>
+                      <IconButton
+                        aria-label="remove"
+                        onClick={() => updateBeerInRoundMinusOne(item.id_item)}
+                      >
+                        <RemoveCircleIcon />
+                      </IconButton>
+                    </Grid>
+                  </Grid>
+                </div>
+              ))}
           </Grid>
         </Grid>
         <Grid>

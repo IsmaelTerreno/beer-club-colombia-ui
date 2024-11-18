@@ -153,6 +153,8 @@ export const selectCurrentOrder = (state: RootState) =>
 export const selectCurrentBeer = (state: RootState) => state.order.currentBeer;
 export const selectCurrentRound = (state: RootState) =>
   state.order.currentRound;
+export const selectItemSubtotalsInCurrentRound = (state: RootState) =>
+  state.order.currentRound?.selected_items;
 export const selectRounds = (state: RootState) => state.order.rounds;
 
 export default orderSlice.reducer;
