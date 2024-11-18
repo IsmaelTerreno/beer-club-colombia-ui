@@ -52,7 +52,12 @@ export const orderSlice = createSlice({
           (item) => item.id_item === action.payload.id_beer,
         );
         // If we have the item
-        if (item) {
+        if (item && item.quantity === 1) {
+          // Remove the item from the round not including the item with quantity 0
+          round.selected_items = round.selected_items.filter(
+            (item) => item.id_item !== action.payload.id_beer,
+          );
+        } else if (item && item.quantity > 1) {
           // Decrease the quantity of the item by one
           item.quantity -= 1;
         }
