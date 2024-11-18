@@ -3,7 +3,7 @@ import Link from "next/link";
 import CreateOrderBtn from "@/app/order/components/CreateOrderBtn";
 import { Grid } from "@mui/system";
 import { Typography } from "@mui/material";
-import BeerOptions from "@/app/order/components/BeerOptions";
+import ManageOrderSection from "@/app/order/components/ManageOrderSection";
 
 interface OrderPageProps {}
 
@@ -22,7 +22,7 @@ const OrderPage: React.FC<OrderPageProps> = () => {
         </Typography>
       </Grid>
       <Grid size={6}>
-        <BeerOptions />
+        <ManageOrderSection />
       </Grid>
       <Grid size={6}>
         <CreateOrderBtn />

@@ -1,12 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { orderSlice } from "@/lib/features/order/orderSlice";
 import { stockSlice } from "@/lib/features/stock/stockSlice";
+import { messageSlice } from "@/lib/features/message/messageSlice";
 
 export const makeStore = () => {
   return configureStore({
     reducer: {
       order: orderSlice.reducer,
       stock: stockSlice.reducer,
+      message: messageSlice.reducer,
     },
   });
 };

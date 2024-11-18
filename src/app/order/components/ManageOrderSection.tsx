@@ -1,10 +1,10 @@
 import React from "react";
-import SelectBeer from "@/app/order/components/SelectBeer";
+import ManageOrderForm from "@/app/order/components/ManageOrderForm";
 import { Paper } from "@mui/material";
 import { ResponseApi } from "@/lib/features/app/response-api.dto";
 import { Stock } from "@/lib/features/app/stock.dto";
 
-const BeerOptions = async () => {
+const ManageOrderSection = async () => {
   const response = await fetch("http://localhost:8000/api/v1/stock/current", {
     cache: "no-store",
   });
@@ -12,9 +12,9 @@ const BeerOptions = async () => {
   const stock = responseApi.data;
   return (
     <Paper className="p-8">
-      <SelectBeer stock={stock} />
+      <ManageOrderForm stock={stock} />
     </Paper>
   );
 };
 
-export default BeerOptions;
+export default ManageOrderSection;

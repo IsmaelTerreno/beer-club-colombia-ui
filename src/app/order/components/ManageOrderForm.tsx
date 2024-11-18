@@ -24,7 +24,6 @@ import {
   selectCurrentBeer,
   selectCurrentOrder,
   selectCurrentRound,
-  selectItemSubtotalsInCurrentRound,
   selectRounds,
   setCurrentBeer,
   setCurrentOrder,
@@ -42,7 +41,7 @@ interface SelectBeerProps {
   stock: Stock | null | undefined;
 }
 
-const SelectBeer: React.FC<SelectBeerProps> = ({ stock }) => {
+const ManageOrderForm: React.FC<SelectBeerProps> = ({ stock }) => {
   const dispatch = useAppDispatch();
   useEffect(() => {
     dispatch(setStock({ stock: stock || null }));
@@ -76,7 +75,6 @@ const SelectBeer: React.FC<SelectBeerProps> = ({ stock }) => {
   const beerSelected = useSelector(selectCurrentBeer);
   const beerRounds = useSelector(selectRounds);
   const currentRound = useSelector(selectCurrentRound);
-  const currentRoundItems = useSelector(selectItemSubtotalsInCurrentRound);
   const currentOrder = useSelector(selectCurrentOrder);
   const setBeerSelected = (beer: Beer | null) => dispatch(setCurrentBeer(beer));
   const [open, setOpen] = React.useState(false);
@@ -251,4 +249,4 @@ const SelectBeer: React.FC<SelectBeerProps> = ({ stock }) => {
   );
 };
 
-export default SelectBeer;
+export default ManageOrderForm;
