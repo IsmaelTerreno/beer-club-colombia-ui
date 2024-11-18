@@ -1,22 +1,20 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../store";
 import { OrderState } from "@/lib/features/order/order-state.dto";
-import { AddRoundInOrderAction } from "@/lib/features/app/add-round-in-order-action.dto";
-import { RemoveRoundInOrderAction } from "@/lib/features/app/remove-round-in-order-action.dto";
 import { UpdateBeerQuantityPlusOneInOrderIdAndRoundIdAction } from "@/lib/features/app/update-beer-quantity-plus-one-in-order-Id-and-round-Id-action.dto";
 import { UpdateBeerQuantityMinusOneInOrderIdAndRoundIdAction } from "@/lib/features/app/update-beer-quantity-minus-one-in-order-Id-and-round-Id-action.dto";
 import { Beer } from "@/lib/features/app/beer.dto";
 import { Order } from "@/lib/features/app/order.dto";
 import { ItemsRequestRound } from "@/lib/features/app/items-request-round.dto";
 import { ItemSubtotal } from "@/lib/features/app/item-sub-total.dto"; // Define the initial state using that type
-import { v1 as uuidV1 } from "uuid";
+import { v1 as uuidV1 } from "uuid"; // Define the initial state using that type
 // Define the initial state using that type
 const initialState: OrderState = {
   orders: [],
   currentOrder: null,
   currentBeer: null,
   currentRound: null,
-  currentRounds: [],
+  rounds: [],
 };
 
 export const orderSlice = createSlice({
@@ -24,41 +22,21 @@ export const orderSlice = createSlice({
   // `createSlice` will infer the state type from the `initialState` argument
   initialState,
   reducers: {
-    addRoundInOrderId: (
-      state,
-      action: PayloadAction<AddRoundInOrderAction>,
-    ) => {
-      state.orders
-        .find((order) => order.id === action.payload.id_order)
-        ?.rounds.push(action.payload.round);
-    },
-    removeRoundInOrderId: (
-      state,
-      action: PayloadAction<RemoveRoundInOrderAction>,
-    ) => {
-      state.orders
-        .find((order) => order.id === action.payload.id_order)
-        ?.rounds.filter((round) => round.id !== action.payload.round.id);
-    },
-    // Use the PayloadAction type to declare the contents of `action.payload`
     updateBeerQuantityPlusOneInOrderIdAndRoundId: (
       state,
       action: PayloadAction<UpdateBeerQuantityPlusOneInOrderIdAndRoundIdAction>,
     ) => {
-      const order = state.orders.find(
-        (order) => order.id === action.payload.id_order,
-      );
-      if (order) {
-        const round = order.rounds.find(
-          (round) => round.id === action.payload.id_round,
+      const round = state.currentRound;
+      // If we have the round
+      if (round) {
+        // Find the item in the round
+        const item = round.selected_items.find(
+          (item) => item.id_item === action.payload.id_beer,
         );
-        if (round) {
-          const item = round.selected_items.find(
-            (item) => item.id_item === action.payload.id_beer,
-          );
-          if (item) {
-            item.quantity += 1;
-          }
+        // If we have the item
+        if (item) {
+          // Increase the quantity of the item by one
+          item.quantity += 1;
         }
       }
     },
@@ -66,20 +44,17 @@ export const orderSlice = createSlice({
       state,
       action: PayloadAction<UpdateBeerQuantityMinusOneInOrderIdAndRoundIdAction>,
     ) => {
-      const order = state.orders.find(
-        (order) => order.id === action.payload.id_order,
-      );
-      if (order) {
-        const round = order.rounds.find(
-          (round) => round.id === action.payload.id_round,
+      const round = state.currentRound;
+      // If we have the round
+      if (round) {
+        // Find the item in the round
+        const item = round.selected_items.find(
+          (item) => item.id_item === action.payload.id_beer,
         );
-        if (round) {
-          const item = round.selected_items.find(
-            (item) => item.id_item === action.payload.id_beer,
-          );
-          if (item) {
-            item.quantity -= 1;
-          }
+        // If we have the item
+        if (item) {
+          // Decrease the quantity of the item by one
+          item.quantity -= 1;
         }
       }
     },
@@ -97,11 +72,15 @@ export const orderSlice = createSlice({
     },
     addBeerToCurrentRound: (state, action: PayloadAction<Beer | null>) => {
       const beer = action.payload;
+      // If we have a beer and a current round
       if (beer) {
+        // Check if the beer is already in the round
         const isBeerInRound = state.currentRound?.selected_items.find(
           (item) => item.id_item === beer.id.toString(),
         );
+        // If the beer is not in the round
         if (!isBeerInRound && beer.id) {
+          // Create a new item subtotal
           const newId = uuidV1();
           const newItemSubtotal: ItemSubtotal = {
             id: newId,
@@ -110,9 +89,32 @@ export const orderSlice = createSlice({
             price_per_unit: beer.price_per_unit,
             sub_total: beer.price_per_unit,
           };
+          // Add the new item subtotal to the current round
           state.currentRound?.selected_items.push(newItemSubtotal);
-          if (state.currentRounds.length === 0 && state.currentRound) {
-            state.currentRounds.push(state.currentRound);
+          // If we don't have any rounds yet, add the current round to the list
+          if (state.rounds.length === 0 && state.currentRound) {
+            // Add the current round to the list of rounds
+            state.rounds.push(state.currentRound);
+            // If we have rounds, check if the current round is already in the list
+          } else if (state.rounds.length > 0 && state.currentRound) {
+            // Find the current round in the list of rounds
+            const findRound = state.rounds.find(
+              (round) => round.id === state.currentRound?.id,
+            );
+            // If we don't find the current round in the list
+            if (!findRound) {
+              // Add the current round to the list of rounds
+              state.rounds.push(state.currentRound);
+            } else {
+              // If we find the current round in the list, update the round
+              state.rounds.map((round) => {
+                // Check if the current round is the same as the round in the list
+                if (round.id === state.currentRound?.id) {
+                  // Add the new item subtotal to the current round
+                  round.selected_items.push(newItemSubtotal);
+                }
+              });
+            }
           }
           // setMessageApp({
           //   message: "Added beer to the round.",
@@ -136,8 +138,6 @@ export const orderSlice = createSlice({
 });
 
 export const {
-  addRoundInOrderId,
-  removeRoundInOrderId,
   updateBeerQuantityPlusOneInOrderIdAndRoundId,
   updateBeerQuantityMinusOneInOrderIdAndRoundId,
   setCurrentBeer,
@@ -153,7 +153,6 @@ export const selectCurrentOrder = (state: RootState) =>
 export const selectCurrentBeer = (state: RootState) => state.order.currentBeer;
 export const selectCurrentRound = (state: RootState) =>
   state.order.currentRound;
-export const selectCurrentRounds = (state: RootState) =>
-  state.order.currentRounds;
+export const selectRounds = (state: RootState) => state.order.rounds;
 
 export default orderSlice.reducer;

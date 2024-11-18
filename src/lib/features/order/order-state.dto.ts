@@ -8,5 +8,5 @@ export interface OrderState {
   currentOrder: Order | null;
   currentBeer: Beer | null;
   currentRound: ItemsRequestRound | null;
-  currentRounds: ItemsRequestRound[];
+  rounds: ItemsRequestRound[];
 }

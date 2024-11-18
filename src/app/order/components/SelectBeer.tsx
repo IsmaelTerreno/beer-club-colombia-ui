@@ -24,7 +24,7 @@ import {
   selectCurrentBeer,
   selectCurrentOrder,
   selectCurrentRound,
-  selectCurrentRounds,
+  selectRounds,
   setCurrentBeer,
   setCurrentOrder,
   setCurrentRound,
@@ -60,7 +60,7 @@ const SelectBeer: React.FC<SelectBeerProps> = ({ stock }) => {
       rounds: [],
       option_items: [],
       processed_items: [],
-      status: "pending",
+      status: "PENDING",
     };
     dispatch(setCurrentOrder(newBlankOrder));
     const newIdRound = uuidV1();
@@ -73,7 +73,7 @@ const SelectBeer: React.FC<SelectBeerProps> = ({ stock }) => {
   }, [stock]);
   const currentStock = useSelector(selectCurrentStock);
   const beerSelected = useSelector(selectCurrentBeer);
-  const currentRounds = useSelector(selectCurrentRounds);
+  const currentRounds = useSelector(selectRounds);
   const currentRound = useSelector(selectCurrentRound);
   const currentOrder = useSelector(selectCurrentOrder);
   const setBeerSelected = (beer: Beer | null) => dispatch(setCurrentBeer(beer));
