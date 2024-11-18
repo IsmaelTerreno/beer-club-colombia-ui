@@ -5,7 +5,6 @@ import {
   Button,
   Divider,
   FormControl,
-  IconButton,
   InputLabel,
   MenuItem,
   Select,
@@ -15,8 +14,6 @@ import {
 import { Grid } from "@mui/system";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import MessageApp from "@/app/order/components/MessageApp";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
-import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import SaveIcon from "@mui/icons-material/Save";
 import { Beer } from "@/lib/features/app/beer.dto";
 import {
@@ -24,12 +21,9 @@ import {
   selectCurrentBeer,
   selectCurrentOrder,
   selectCurrentRound,
-  selectRounds,
   setCurrentBeer,
   setCurrentOrder,
   setCurrentRound,
-  updateBeerQuantityMinusOneInOrderIdAndRoundId,
-  updateBeerQuantityPlusOneInOrderIdAndRoundId,
 } from "@/lib/features/order/orderSlice";
 import { useSelector } from "react-redux";
 import { selectCurrentStock, setStock } from "@/lib/features/stock/stockSlice";
@@ -41,6 +35,7 @@ import {
   setMessageApp,
   setOpen,
 } from "@/lib/features/message/messageSlice";
+import CurrentRoundTable from "@/app/order/components/CurrentRoundTable";
 
 interface SelectBeerProps {
   stock: Stock | null | undefined;
@@ -78,7 +73,6 @@ const ManageOrderForm: React.FC<SelectBeerProps> = ({ stock }) => {
   }, [stock]);
   const currentStock = useSelector(selectCurrentStock);
   const beerSelected = useSelector(selectCurrentBeer);
-  const beerRounds = useSelector(selectRounds);
   const currentRound = useSelector(selectCurrentRound);
   const currentOrder = useSelector(selectCurrentOrder);
   const setBeerSelected = (beer: Beer | null) => dispatch(setCurrentBeer(beer));
@@ -121,32 +115,17 @@ const ManageOrderForm: React.FC<SelectBeerProps> = ({ stock }) => {
         );
         setBeerSelected(null);
       }
+    } else {
+      dispatch(
+        setMessageApp({
+          currentMessage: "Select a beer to add to the round.",
+          severity: "error",
+          open: true,
+        }),
+      );
     }
   };
 
-  const updateBeerInRoundPlusOne = (beerId: string) => {
-    dispatch(
-      updateBeerQuantityPlusOneInOrderIdAndRoundId({
-        id_order: currentOrder?.id || "",
-        id_round: currentRound?.id || "",
-        id_beer: beerId,
-      }),
-    );
-  };
-  const updateBeerInRoundMinusOne = (beerId: string) => {
-    dispatch(
-      updateBeerQuantityMinusOneInOrderIdAndRoundId({
-        id_order: currentOrder?.id || "",
-        id_round: currentRound?.id || "",
-        id_beer: beerId,
-      }),
-    );
-  };
-
-  const getBeerLabelById = (id: string) => {
-    const beer = currentStock?.beers.find((beer) => beer.id.toString() === id);
-    return beer?.name || "";
-  };
   const setMessageOpen = (isOpen: boolean) => {
     dispatch(setOpen(isOpen));
   };
@@ -221,40 +200,7 @@ const ManageOrderForm: React.FC<SelectBeerProps> = ({ stock }) => {
           <Divider className="mb-5" />
         </Grid>
         <Grid>
-          <Grid container flexDirection="column">
-            {currentRound && currentRound.selected_items.length === 0 && (
-              <Typography variant="body1">
-                No beers selected for current the round.
-              </Typography>
-            )}
-            {currentRound &&
-              currentRound.selected_items.map((item) => (
-                <div key={item.id_item + "-item-record"}>
-                  <Grid container flexDirection="row">
-                    <Grid>
-                      <Typography variant="body1">
-                        {getBeerLabelById(item.id_item)} - Price: $
-                        {item.price_per_unit} - Quantity: {item.quantity}
-                      </Typography>
-                    </Grid>
-                    <Grid>
-                      <IconButton
-                        aria-label="add"
-                        onClick={() => updateBeerInRoundPlusOne(item.id_item)}
-                      >
-                        <AddCircleIcon />
-                      </IconButton>
-                      <IconButton
-                        aria-label="remove"
-                        onClick={() => updateBeerInRoundMinusOne(item.id_item)}
-                      >
-                        <RemoveCircleIcon />
-                      </IconButton>
-                    </Grid>
-                  </Grid>
-                </div>
-              ))}
-          </Grid>
+          <CurrentRoundTable />
         </Grid>
         <Grid>
           <Button

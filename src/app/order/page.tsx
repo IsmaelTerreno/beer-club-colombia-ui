@@ -18,7 +18,7 @@ const OrderPage: React.FC<OrderPageProps> = () => {
     >
       <Grid size={6}>
         <Typography variant="h4" gutterBottom className="mt-10">
-          Create Order
+          Order management
         </Typography>
       </Grid>
       <Grid size={6}>
