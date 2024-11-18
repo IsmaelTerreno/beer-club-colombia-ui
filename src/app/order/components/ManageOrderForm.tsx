@@ -36,6 +36,7 @@ import {
   setOpen,
 } from "@/lib/features/message/messageSlice";
 import CurrentRoundTable from "@/app/order/components/CurrentRoundTable";
+import CreateOrderBtn from "@/app/order/components/CreateOrderBtn";
 
 interface SelectBeerProps {
   stock: Stock | null | undefined;
@@ -51,7 +52,7 @@ const ManageOrderForm: React.FC<SelectBeerProps> = ({ stock }) => {
       created: new Date().toLocaleString(),
       paid: false,
       subtotal: 0,
-      taxes: 0,
+      taxes: 2,
       discounts: 0,
       total_to_pay: 0,
       cash_tendered: 0,
@@ -217,6 +218,9 @@ const ManageOrderForm: React.FC<SelectBeerProps> = ({ stock }) => {
           >
             Save the current round
           </Button>
+        </Grid>
+        <Grid>
+          <CreateOrderBtn />
         </Grid>
       </Grid>
     </>

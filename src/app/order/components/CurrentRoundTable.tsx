@@ -14,6 +14,7 @@ import { useSelector } from "react-redux";
 import {
   selectCurrentOrder,
   selectCurrentRound,
+  selectItemSubtotalsInCurrentRound,
   updateBeerQuantityMinusOneInOrderIdAndRoundId,
   updateBeerQuantityPlusOneInOrderIdAndRoundId,
 } from "@/lib/features/order/orderSlice";
@@ -26,6 +27,9 @@ const CurrentRoundTable: React.FC = () => {
   const dispatch = useAppDispatch();
   const currentStock = useSelector(selectCurrentStock);
   const currentRound = useSelector(selectCurrentRound);
+  const itemSubtotalsInCurrentRound = useSelector(
+    selectItemSubtotalsInCurrentRound,
+  );
   const getBeerLabelById = (id: string) => {
     const beer = currentStock?.beers.find((beer) => beer.id.toString() === id);
     return beer?.name || "";
@@ -49,6 +53,14 @@ const CurrentRoundTable: React.FC = () => {
       }),
     );
   };
+  const allSubTotal = itemSubtotalsInCurrentRound
+    ? itemSubtotalsInCurrentRound
+        .reduce(
+          (acc, beerItem) => acc + beerItem.price_per_unit * beerItem.quantity,
+          0,
+        )
+        .toLocaleString("en-US")
+    : 0;
   return (
     <>
       {currentRound && currentRound.selected_items.length === 0 && (
@@ -61,10 +73,18 @@ const CurrentRoundTable: React.FC = () => {
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell>Beer</TableCell>
-                <TableCell align="right">Quantity</TableCell>
-                <TableCell align="right">Price per unit</TableCell>
-                <TableCell align="right">Sub total</TableCell>
+                <TableCell>
+                  <Typography variant="body1">Beer</Typography>
+                </TableCell>
+                <TableCell align="right">
+                  <Typography variant="body1">Quantity</Typography>
+                </TableCell>
+                <TableCell align="right">
+                  <Typography variant="body1">Price per unit</Typography>
+                </TableCell>
+                <TableCell align="right">
+                  <Typography variant="body1">Sub total</Typography>
+                </TableCell>
                 <TableCell align="right"></TableCell>
                 <TableCell align="right"></TableCell>
               </TableRow>
@@ -77,17 +97,25 @@ const CurrentRoundTable: React.FC = () => {
                     sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                   >
                     <TableCell component="th" scope="row">
-                      {getBeerLabelById(beerItem.id_item)}
-                    </TableCell>
-                    <TableCell align="right">{beerItem.quantity}</TableCell>
-                    <TableCell align="right">
-                      ${beerItem.price_per_unit.toLocaleString("en-US")}
+                      <Typography variant="h6">
+                        {getBeerLabelById(beerItem.id_item)}
+                      </Typography>
                     </TableCell>
                     <TableCell align="right">
-                      $
-                      {(
-                        beerItem.price_per_unit * beerItem.quantity
-                      ).toLocaleString("en-US")}
+                      <Typography variant="h6">{beerItem.quantity}</Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Typography variant="h6">
+                        ${beerItem.price_per_unit.toLocaleString("en-US")}
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Typography variant="h6">
+                        $
+                        {(
+                          beerItem.price_per_unit * beerItem.quantity
+                        ).toLocaleString("en-US")}
+                      </Typography>
                     </TableCell>
                     <TableCell align="center">
                       <IconButton
@@ -113,6 +141,16 @@ const CurrentRoundTable: React.FC = () => {
                     </TableCell>
                   </TableRow>
                 ))}
+              <TableRow>
+                <TableCell colSpan={3}>
+                  <Typography variant="h6">Total</Typography>
+                </TableCell>
+                <TableCell align="right">
+                  <Typography variant="h6">
+                    ${allSubTotal.toLocaleString("en-US")}
+                  </Typography>
+                </TableCell>
+              </TableRow>
             </TableBody>
           </Table>
         </TableContainer>

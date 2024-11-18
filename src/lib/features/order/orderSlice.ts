@@ -121,21 +121,6 @@ export const orderSlice = createSlice({
               });
             }
           }
-          // setMessageApp({
-          //   message: "Added beer to the round.",
-          //   severity: "info",
-          //   setOpen,
-          //   open,
-          // });
-          // setOpen(true);
-        } else {
-          // setMessageApp({
-          //   message: "Beer already in the round.",
-          //   severity: "warning",
-          //   setOpen,
-          //   open,
-          // });
-          // setOpen(true);
         }
       }
     },

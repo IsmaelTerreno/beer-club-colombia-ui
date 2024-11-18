@@ -1,6 +1,4 @@
 import React from "react";
-import Link from "next/link";
-import CreateOrderBtn from "@/app/order/components/CreateOrderBtn";
 import { Grid } from "@mui/system";
 import { Typography } from "@mui/material";
 import ManageOrderSection from "@/app/order/components/ManageOrderSection";
@@ -23,12 +21,6 @@ const OrderPage: React.FC<OrderPageProps> = () => {
       </Grid>
       <Grid size={6}>
         <ManageOrderSection />
-      </Grid>
-      <Grid size={6}>
-        <CreateOrderBtn />
-      </Grid>
-      <Grid size={6}>
-        <Link href="/">Back to main</Link>
       </Grid>
     </Grid>
   );
