@@ -27,7 +27,7 @@ const RoundInOrderTable: React.FC = () => {
                 <TableCell>
                   <Typography variant="body1">Created at</Typography>
                 </TableCell>
-                <TableCell align="right">
+                <TableCell>
                   <Typography variant="body1">Quantity</Typography>
                 </TableCell>
               </TableRow>
@@ -39,12 +39,12 @@ const RoundInOrderTable: React.FC = () => {
                     key={roundItem.id + "-round-order-item"}
                     sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                   >
-                    <TableCell align="right">
+                    <TableCell>
                       <Typography variant="h6">
                         {roundItem.created_at}
                       </Typography>
                     </TableCell>
-                    <TableCell align="right">
+                    <TableCell>
                       <Typography variant="h6">
                         {roundItem.selected_items.reduce(
                           (acc, item) => acc + item.quantity,
