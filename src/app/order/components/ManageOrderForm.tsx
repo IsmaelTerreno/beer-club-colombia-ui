@@ -52,7 +52,7 @@ interface SelectBeerProps {}
 
 const ManageOrderForm: React.FC<SelectBeerProps> = () => {
   const dispatch = useAppDispatch();
-  const [createOrder, result] = useCreateOrderMutation();
+  const [createOrder, resultCreateOrder] = useCreateOrderMutation();
   const {
     data: dataStock,
     error: errorStock,
@@ -72,6 +72,31 @@ const ManageOrderForm: React.FC<SelectBeerProps> = () => {
       dispatch(setStock({ stock: stockApi || null }));
     }
   }, [dataStock, errorStock, isLoadingStock]);
+  useEffect(() => {
+    if (resultCreateOrder && resultCreateOrder.status === "fulfilled") {
+      const responseData = resultCreateOrder as unknown as {
+        data: { data: { id: string } };
+      };
+      if (responseData.data?.data?.id) {
+        dispatch(
+          setMessageApp({
+            currentMessage: "Order created successfully.",
+            severity: "success",
+            open: true,
+          }),
+        );
+        dispatch(setCurrentOrder(getNewBlankOrder()));
+      } else {
+        dispatch(
+          setMessageApp({
+            currentMessage: "Error creating the order.",
+            severity: "error",
+            open: true,
+          }),
+        );
+      }
+    }
+  }, [resultCreateOrder]);
   const currentStock = useSelector(selectCurrentStock);
   const beerSelected = useSelector(selectCurrentBeer);
   const currentRound = useSelector(selectCurrentRound);
