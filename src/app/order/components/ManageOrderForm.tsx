@@ -21,6 +21,7 @@ import {
   selectCurrentBeer,
   selectCurrentOrder,
   selectCurrentRound,
+  selectOrderRounds,
   setCurrentBeer,
   setCurrentOrder,
   setCurrentRound,
@@ -34,7 +35,6 @@ import {
   setOpen,
 } from "@/lib/features/message/messageSlice";
 import CurrentRoundTable from "@/app/order/components/CurrentRoundTable";
-import CreateOrderBtn from "@/app/order/components/CreateOrderBtn";
 import {
   getNewBlankOrder,
   getNewBlankRound,
@@ -56,6 +56,7 @@ const ManageOrderForm: React.FC<SelectBeerProps> = ({ stock }) => {
   const beerSelected = useSelector(selectCurrentBeer);
   const currentRound = useSelector(selectCurrentRound);
   const currentOrder = useSelector(selectCurrentOrder);
+  const orderRounds = useSelector(selectOrderRounds);
   const setBeerSelected = (beer: Beer | null) => dispatch(setCurrentBeer(beer));
   const currentMessageDetails = useSelector(selectCurrentMessageDetails);
 
@@ -121,6 +122,11 @@ const ManageOrderForm: React.FC<SelectBeerProps> = ({ stock }) => {
   const setMessageOpen = (isOpen: boolean) => {
     dispatch(setOpen(isOpen));
   };
+  const isMakeOrderDisabled = orderRounds && orderRounds.length < 1;
+  console.log("isMakeOrderDisabled", isMakeOrderDisabled);
+  console.log("currentOrder", currentOrder);
+  console.log("order.rounds", orderRounds);
+  const isSaveRoundDisabled = currentRound?.selected_items.length === 0;
   return (
     <section>
       <Grid container flexDirection="row" justifyContent="space-between">
@@ -179,10 +185,21 @@ const ManageOrderForm: React.FC<SelectBeerProps> = ({ stock }) => {
         endIcon={<SaveIcon />}
         className="mt-10 mb-10"
         onClick={saveCurrentRound}
+        disabled={isSaveRoundDisabled}
       >
         Save the current round
       </Button>
-      <CreateOrderBtn />
+      <Divider className="mb-5" />
+      <Button
+        onClick={() => {
+          console.log("Order created");
+        }}
+        variant="contained"
+        disabled={isMakeOrderDisabled}
+        className="mt-10 mb-10"
+      >
+        Make order
+      </Button>
       <MessageApp
         message={currentMessageDetails.currentMessage || ""}
         severity={currentMessageDetails.severity}

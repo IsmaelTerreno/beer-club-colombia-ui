@@ -4,7 +4,7 @@ import { Typography } from "@mui/material";
 export default function Home() {
   return (
     <div className="items-center justify-items-center">
-      <main className="flex flex-col gap-8 ">
+      <main className="flex flex-col gap-8">
         <Typography
           variant="h1"
           className="mt-60 text-4xl font-bold text-center bg-black rounded-full p-8"

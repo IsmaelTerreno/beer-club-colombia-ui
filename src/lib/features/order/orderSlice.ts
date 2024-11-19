@@ -162,6 +162,7 @@ export const {
 export const selectOrders = (state: RootState) => state.order.orders;
 export const selectCurrentOrder = (state: RootState) =>
   state.order.currentOrder;
+export const selectOrderRounds = (state: RootState) => state.order.rounds;
 export const selectCurrentBeer = (state: RootState) => state.order.currentBeer;
 export const selectCurrentRound = (state: RootState) =>
   state.order.currentRound;
