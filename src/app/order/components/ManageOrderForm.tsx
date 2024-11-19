@@ -41,18 +41,36 @@ import {
 } from "@/lib/features/app/utils/utils";
 import MessageApp from "@/app/order/components/MessageApp";
 import RoundInOrderTable from "@/app/order/components/RoundInOrderTable";
+import {
+  useCreateOrderMutation,
+  useGetLastStockQuery,
+} from "@/lib/features/api/beer-club-colombia-api";
+import TopInfoSkeleton from "@/app/order/components/TopInfoSkeleton";
 
-interface SelectBeerProps {
-  stock: Stock | null | undefined;
-}
+interface SelectBeerProps {}
 
-const ManageOrderForm: React.FC<SelectBeerProps> = ({ stock }) => {
+const ManageOrderForm: React.FC<SelectBeerProps> = () => {
   const dispatch = useAppDispatch();
+  const [createOrder, result] = useCreateOrderMutation();
+  const {
+    data: dataStock,
+    error: errorStock,
+    isLoading: isLoadingStock,
+  } = useGetLastStockQuery() as {
+    data?: { data: Stock };
+    error?: any;
+    isLoading: boolean;
+  };
   useEffect(() => {
-    dispatch(setStock({ stock: stock || null }));
     dispatch(setCurrentOrder(getNewBlankOrder()));
     dispatch(setCurrentRound(getNewBlankRound()));
-  }, [stock]);
+  }, []);
+  useEffect(() => {
+    if (dataStock && !errorStock && !isLoadingStock) {
+      const stockApi = dataStock?.data;
+      dispatch(setStock({ stock: stockApi || null }));
+    }
+  }, [dataStock, errorStock, isLoadingStock]);
   const currentStock = useSelector(selectCurrentStock);
   const beerSelected = useSelector(selectCurrentBeer);
   const currentRound = useSelector(selectCurrentRound);
@@ -124,22 +142,30 @@ const ManageOrderForm: React.FC<SelectBeerProps> = ({ stock }) => {
   };
   const isMakeOrderDisabled = orderRounds && orderRounds.length < 1;
   const isSaveRoundDisabled = currentRound?.selected_items.length === 0;
+  const createOrderApi = () => {
+    if (currentOrder && currentOrder.id) {
+      createOrder(currentOrder);
+    }
+  };
   return (
     <section>
-      <Grid container flexDirection="row" justifyContent="space-between">
-        <Grid>
-          <Typography variant="subtitle1" gutterBottom>
-            Total available {totalBeers} beers.
-          </Typography>
+      {isLoadingStock && <TopInfoSkeleton />}
+      {!isLoadingStock && (
+        <Grid container flexDirection="row" justifyContent="space-between">
+          <Grid>
+            <Typography variant="subtitle1" gutterBottom>
+              Total available {totalBeers} beers.
+            </Typography>
+          </Grid>
+          <Grid>
+            <Typography variant="subtitle1" gutterBottom>
+              Last Stock update at{" "}
+              {currentStock?.last_updated &&
+                new Date(currentStock.last_updated).toLocaleString()}
+            </Typography>
+          </Grid>
         </Grid>
-        <Grid>
-          <Typography variant="subtitle1" gutterBottom>
-            Last Stock update at{" "}
-            {currentStock?.last_updated &&
-              new Date(currentStock.last_updated).toLocaleString()}
-          </Typography>
-        </Grid>
-      </Grid>
+      )}
       <Divider className="mb-5" />
       <Typography variant="h6" gutterBottom>
         Beers to add to the round
@@ -189,9 +215,7 @@ const ManageOrderForm: React.FC<SelectBeerProps> = ({ stock }) => {
       <Divider className="mb-5" />
       <RoundInOrderTable />
       <Button
-        onClick={() => {
-          console.log("Order created");
-        }}
+        onClick={createOrderApi}
         variant="contained"
         disabled={isMakeOrderDisabled}
         className="mt-10 mb-10"

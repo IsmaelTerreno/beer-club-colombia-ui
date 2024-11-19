@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { orderSlice } from "@/lib/features/order/orderSlice";
 import { stockSlice } from "@/lib/features/stock/stockSlice";
 import { messageSlice } from "@/lib/features/message/messageSlice";
+import { api } from "@/lib/features/api/beer-club-colombia-api";
 
 export const makeStore = () => {
   return configureStore({
@@ -9,7 +10,12 @@ export const makeStore = () => {
       order: orderSlice.reducer,
       stock: stockSlice.reducer,
       message: messageSlice.reducer,
+      [api.reducerPath]: api.reducer,
     },
+    // Adding the api middleware enables caching, invalidation, polling,
+    // and other useful features of `rtk-query`.
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware().concat(api.middleware),
   });
 };
 
