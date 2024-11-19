@@ -18,6 +18,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import { Beer } from "@/lib/features/app/beer.dto";
 import {
   addBeerToCurrentRound,
+  saveCurrentRoundToRounds,
   selectCurrentBeer,
   selectCurrentOrder,
   selectCurrentRound,
@@ -28,8 +29,6 @@ import {
 import { useSelector } from "react-redux";
 import { selectCurrentStock, setStock } from "@/lib/features/stock/stockSlice";
 import { useAppDispatch } from "@/lib/hooks";
-import { Order } from "@/lib/features/app/order.dto";
-import { v1 as uuidV1 } from "uuid";
 import {
   selectCurrentMessageDetails,
   setMessageApp,
@@ -37,6 +36,10 @@ import {
 } from "@/lib/features/message/messageSlice";
 import CurrentRoundTable from "@/app/order/components/CurrentRoundTable";
 import CreateOrderBtn from "@/app/order/components/CreateOrderBtn";
+import {
+  getNewBlankOrder,
+  getNewBlankRound,
+} from "@/lib/features/app/utils/utils";
 
 interface SelectBeerProps {
   stock: Stock | null | undefined;
@@ -46,31 +49,8 @@ const ManageOrderForm: React.FC<SelectBeerProps> = ({ stock }) => {
   const dispatch = useAppDispatch();
   useEffect(() => {
     dispatch(setStock({ stock: stock || null }));
-    const newId = uuidV1();
-    const newBlankOrder: Order = {
-      id: newId,
-      created: new Date().toLocaleString(),
-      paid: false,
-      subtotal: 0,
-      taxes: 2,
-      discounts: 0,
-      total_to_pay: 0,
-      cash_tendered: 0,
-      cash_returned: 0,
-      details: "",
-      rounds: [],
-      option_items: [],
-      processed_items: [],
-      status: "PENDING",
-    };
-    dispatch(setCurrentOrder(newBlankOrder));
-    const newIdRound = uuidV1();
-    const currentRoundBlank = {
-      id: newIdRound,
-      selected_items: [],
-      created_at: new Date().toLocaleString(),
-    };
-    dispatch(setCurrentRound(currentRoundBlank));
+    dispatch(setCurrentOrder(getNewBlankOrder()));
+    dispatch(setCurrentRound(getNewBlankRound()));
   }, [stock]);
   const currentStock = useSelector(selectCurrentStock);
   const beerSelected = useSelector(selectCurrentBeer);
@@ -126,7 +106,18 @@ const ManageOrderForm: React.FC<SelectBeerProps> = ({ stock }) => {
       );
     }
   };
-
+  const saveCurrentRound = () => {
+    dispatch(saveCurrentRoundToRounds());
+    dispatch(setCurrentOrder(getNewBlankOrder()));
+    dispatch(setCurrentRound(getNewBlankRound()));
+    dispatch(
+      setMessageApp({
+        currentMessage: "Round added to the current order.",
+        severity: "success",
+        open: true,
+      }),
+    );
+  };
   const setMessageOpen = (isOpen: boolean) => {
     dispatch(setOpen(isOpen));
   };
@@ -214,7 +205,7 @@ const ManageOrderForm: React.FC<SelectBeerProps> = ({ stock }) => {
             variant="contained"
             endIcon={<SaveIcon />}
             className="mt-10 mb-10"
-            onClick={addBeerToRound}
+            onClick={saveCurrentRound}
           >
             Save the current round
           </Button>

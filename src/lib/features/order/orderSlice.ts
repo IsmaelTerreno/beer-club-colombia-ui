@@ -124,6 +124,27 @@ export const orderSlice = createSlice({
         }
       }
     },
+    saveCurrentRoundToRounds: (state) => {
+      const currentRound = state.currentRound;
+      if (currentRound) {
+        const isRoundInRounds = state.rounds.find(
+          (round) => round.id === currentRound.id,
+        );
+        if (!isRoundInRounds) {
+          // Add the current round to the list of rounds
+          state.rounds.push(currentRound);
+        } else {
+          // If we find the current round in the list, update the round
+          state.rounds.map((round) => {
+            // Check if the current round is the same as the round in the list
+            if (round.id === currentRound.id) {
+              // Update the round
+              round = currentRound;
+            }
+          });
+        }
+      }
+    },
   },
 });
 
@@ -134,6 +155,7 @@ export const {
   setCurrentOrder,
   setCurrentRound,
   addBeerToCurrentRound,
+  saveCurrentRoundToRounds,
 } = orderSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
