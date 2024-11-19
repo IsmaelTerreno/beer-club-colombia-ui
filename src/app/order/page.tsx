@@ -16,7 +16,10 @@ const OrderPage: React.FC<OrderPageProps> = async () => {
   return (
     <Grid container spacing={4} flexDirection="column" alignItems="center">
       <Grid size={6}>
-        <Typography variant="h4" gutterBottom className="mt-10">
+        <Typography
+          variant="h4"
+          className="mt-5 text-2xl font-bold text-center bg-black rounded-full p-4"
+        >
           Order management
         </Typography>
       </Grid>

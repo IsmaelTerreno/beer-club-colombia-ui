@@ -40,6 +40,7 @@ import {
   getNewBlankRound,
 } from "@/lib/features/app/utils/utils";
 import MessageApp from "@/app/order/components/MessageApp";
+import RoundInOrderTable from "@/app/order/components/RoundInOrderTable";
 
 interface SelectBeerProps {
   stock: Stock | null | undefined;
@@ -123,9 +124,6 @@ const ManageOrderForm: React.FC<SelectBeerProps> = ({ stock }) => {
     dispatch(setOpen(isOpen));
   };
   const isMakeOrderDisabled = orderRounds && orderRounds.length < 1;
-  console.log("isMakeOrderDisabled", isMakeOrderDisabled);
-  console.log("currentOrder", currentOrder);
-  console.log("order.rounds", orderRounds);
   const isSaveRoundDisabled = currentRound?.selected_items.length === 0;
   return (
     <section>
@@ -190,6 +188,7 @@ const ManageOrderForm: React.FC<SelectBeerProps> = ({ stock }) => {
         Save the current round
       </Button>
       <Divider className="mb-5" />
+      <RoundInOrderTable />
       <Button
         onClick={() => {
           console.log("Order created");
