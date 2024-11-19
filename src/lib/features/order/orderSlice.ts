@@ -126,16 +126,16 @@ export const orderSlice = createSlice({
     },
     saveCurrentRoundToRounds: (state) => {
       const currentRound = state.currentRound;
-      if (currentRound) {
-        const isRoundInRounds = state.rounds.find(
+      if (currentRound && state.currentOrder) {
+        const isRoundInRounds = state.currentOrder.rounds.find(
           (round) => round.id === currentRound.id,
         );
         if (!isRoundInRounds) {
           // Add the current round to the list of rounds
-          state.rounds.push(currentRound);
+          state.currentOrder.rounds.push(currentRound);
         } else {
           // If we find the current round in the list, update the round
-          state.rounds.map((round) => {
+          state.currentOrder.rounds.map((round) => {
             // Check if the current round is the same as the round in the list
             if (round.id === currentRound.id) {
               // Update the round
@@ -162,7 +162,8 @@ export const {
 export const selectOrders = (state: RootState) => state.order.orders;
 export const selectCurrentOrder = (state: RootState) =>
   state.order.currentOrder;
-export const selectOrderRounds = (state: RootState) => state.order.rounds;
+export const selectOrderRounds = (state: RootState) =>
+  state.order?.currentOrder?.rounds;
 export const selectCurrentBeer = (state: RootState) => state.order.currentBeer;
 export const selectCurrentRound = (state: RootState) =>
   state.order.currentRound;

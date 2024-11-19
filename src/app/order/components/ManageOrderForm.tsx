@@ -110,7 +110,6 @@ const ManageOrderForm: React.FC<SelectBeerProps> = ({ stock }) => {
   };
   const saveCurrentRound = () => {
     dispatch(saveCurrentRoundToRounds());
-    dispatch(setCurrentOrder(getNewBlankOrder()));
     dispatch(setCurrentRound(getNewBlankRound()));
     dispatch(
       setMessageApp({
