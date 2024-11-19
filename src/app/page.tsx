@@ -3,8 +3,8 @@ import { Typography } from "@mui/material";
 
 export default function Home() {
   return (
-    <div className="items-center justify-items-center p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
+    <div className="items-center justify-items-center">
+      <main className="flex flex-col gap-8 ">
         <Typography
           variant="h1"
           className="mt-60 text-4xl font-bold text-center bg-black rounded-full p-8"
