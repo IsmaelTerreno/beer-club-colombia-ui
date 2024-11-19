@@ -13,7 +13,6 @@ import {
 } from "@mui/material";
 import { Grid } from "@mui/system";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
-import MessageApp from "@/app/order/components/MessageApp";
 import SaveIcon from "@mui/icons-material/Save";
 import { Beer } from "@/lib/features/app/beer.dto";
 import {
@@ -40,6 +39,7 @@ import {
   getNewBlankOrder,
   getNewBlankRound,
 } from "@/lib/features/app/utils/utils";
+import MessageApp from "@/app/order/components/MessageApp";
 
 interface SelectBeerProps {
   stock: Stock | null | undefined;
@@ -122,99 +122,74 @@ const ManageOrderForm: React.FC<SelectBeerProps> = ({ stock }) => {
     dispatch(setOpen(isOpen));
   };
   return (
-    <>
+    <section>
+      <Grid container flexDirection="row" justifyContent="space-between">
+        <Grid>
+          <Typography variant="subtitle1" gutterBottom>
+            Total available {totalBeers} beers.
+          </Typography>
+        </Grid>
+        <Grid>
+          <Typography variant="subtitle1" gutterBottom>
+            Last Stock update at{" "}
+            {currentStock?.last_updated &&
+              new Date(currentStock.last_updated).toLocaleString()}
+          </Typography>
+        </Grid>
+      </Grid>
+      <Divider className="mb-5" />
+      <Typography variant="h6" gutterBottom>
+        Beers to add to the round
+      </Typography>
+      <Divider className="mb-5" />
+      <FormControl fullWidth>
+        <InputLabel id="demo-simple-select-label">Beer selection</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={beerSelected ? beerSelected.id : ""}
+          label="Select Beer"
+          onChange={handleChange}
+        >
+          {currentStock &&
+            currentStock.beers &&
+            currentStock.beers.map((beer) => (
+              <MenuItem key={beer.id + "-menu-item"} value={beer.id.toString()}>
+                {beer.name} - Price: ${beer.price_per_unit} - Available:{" "}
+                {beer.quantity}
+              </MenuItem>
+            ))}
+        </Select>
+      </FormControl>
+      <Button
+        variant="contained"
+        endIcon={<AddShoppingCartIcon />}
+        className="mt-10 mb-10"
+        onClick={addBeerToRound}
+      >
+        Add beer to round
+      </Button>
+      <Typography variant="h6" gutterBottom>
+        Current round details
+      </Typography>
+      <Divider className="mb-5" />
+      <CurrentRoundTable />
+      <Button
+        variant="contained"
+        endIcon={<SaveIcon />}
+        className="mt-10 mb-10"
+        onClick={saveCurrentRound}
+      >
+        Save the current round
+      </Button>
+      <CreateOrderBtn />
       <MessageApp
         message={currentMessageDetails.currentMessage || ""}
         severity={currentMessageDetails.severity}
         onClose={() => setMessageOpen(false)}
         open={currentMessageDetails.open}
       />
-      <Grid container flexDirection="column">
-        <Grid>
-          <Grid container flexDirection="row" justifyContent="space-between">
-            <Grid>
-              <Typography variant="subtitle1" gutterBottom>
-                Total available {totalBeers} beers.
-              </Typography>
-            </Grid>
-            <Grid>
-              <Typography variant="subtitle1" gutterBottom>
-                Last Stock update at{" "}
-                {currentStock?.last_updated &&
-                  new Date(currentStock.last_updated).toLocaleString()}
-              </Typography>
-            </Grid>
-          </Grid>
-        </Grid>
-        <Grid>
-          <Divider className="mb-5" />
-        </Grid>
-        <Grid>
-          <Typography variant="h6" gutterBottom>
-            Beers to add to the round
-          </Typography>
-          <Divider className="mb-5" />
-        </Grid>
-        <Grid>
-          <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">
-              Beer selection
-            </InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={beerSelected ? beerSelected.id : ""}
-              label="Select Beer"
-              onChange={handleChange}
-            >
-              {currentStock &&
-                currentStock.beers &&
-                currentStock.beers.map((beer) => (
-                  <MenuItem
-                    key={beer.id + "-menu-item"}
-                    value={beer.id.toString()}
-                  >
-                    {beer.name} - Price: ${beer.price_per_unit} - Available:{" "}
-                    {beer.quantity}
-                  </MenuItem>
-                ))}
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid>
-          <Button
-            variant="contained"
-            endIcon={<AddShoppingCartIcon />}
-            className="mt-10 mb-10"
-            onClick={addBeerToRound}
-          >
-            Add beer to round
-          </Button>
-        </Grid>
-        <Grid>
-          <Typography variant="h6" gutterBottom>
-            Current round details
-          </Typography>
-          <Divider className="mb-5" />
-        </Grid>
-        <Grid>
-          <CurrentRoundTable />
-        </Grid>
-        <Grid>
-          <Button
-            variant="contained"
-            endIcon={<SaveIcon />}
-            className="mt-10 mb-10"
-            onClick={saveCurrentRound}
-          >
-            Save the current round
-          </Button>
-        </Grid>
-        <Grid>
-          <CreateOrderBtn />
-        </Grid>
-      </Grid>
-    </>
+    </section>
   );
 };
 
