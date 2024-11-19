@@ -27,7 +27,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        style={{
+          backgroundImage: "url(/images/main-bg.jpeg)",
+          backgroundSize: "cover",
+        }}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased `}
       >
         <StoreProvider>{children}</StoreProvider>
       </body>
