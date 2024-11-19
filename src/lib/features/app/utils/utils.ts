@@ -5,7 +5,7 @@ import { ItemsRequestRound } from "@/lib/features/app/items-request-round.dto";
 export const getNewBlankOrder = (): Order => {
   return {
     id: uuidV1(),
-    created: new Date().toLocaleString(),
+    created: new Date().toISOString(),
     paid: false,
     subtotal: 0,
     taxes: 2,
@@ -25,6 +25,6 @@ export const getNewBlankRound = (): ItemsRequestRound => {
   return {
     id: uuidV1(),
     selected_items: [],
-    created_at: new Date().toLocaleString(),
+    created: new Date().toISOString(),
   };
 };
