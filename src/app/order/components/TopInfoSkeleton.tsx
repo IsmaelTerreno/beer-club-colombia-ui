@@ -1,10 +1,10 @@
 import React from "react";
-import { Box, Skeleton } from "@mui/material";
+import { Box, LinearProgress } from "@mui/material";
 
 const TopInfoSkeleton: React.FC = () => {
   return (
     <Box>
-      <Skeleton animation="wave" />
+      <LinearProgress />
     </Box>
   );
 };

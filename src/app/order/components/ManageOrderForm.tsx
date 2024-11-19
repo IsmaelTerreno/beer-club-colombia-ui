@@ -46,6 +46,7 @@ import {
   useGetLastStockQuery,
 } from "@/lib/features/api/beer-club-colombia-api";
 import TopInfoSkeleton from "@/app/order/components/TopInfoSkeleton";
+import Link from "next/link";
 
 interface SelectBeerProps {}
 
@@ -151,83 +152,92 @@ const ManageOrderForm: React.FC<SelectBeerProps> = () => {
     <section>
       {isLoadingStock && <TopInfoSkeleton />}
       {!isLoadingStock && (
-        <Grid container flexDirection="row" justifyContent="space-between">
-          <Grid>
-            <Typography variant="subtitle1" gutterBottom>
-              Total available {totalBeers} beers.
-            </Typography>
+        <>
+          <Grid container flexDirection="row" justifyContent="space-between">
+            <Grid>
+              <Typography variant="subtitle1" gutterBottom>
+                Total available {totalBeers} beers.
+              </Typography>
+            </Grid>
+            <Grid>
+              <Typography variant="subtitle1" gutterBottom>
+                Last Stock update at{" "}
+                {currentStock?.last_updated &&
+                  new Date(currentStock.last_updated).toLocaleString()}
+              </Typography>
+            </Grid>
           </Grid>
-          <Grid>
-            <Typography variant="subtitle1" gutterBottom>
-              Last Stock update at{" "}
-              {currentStock?.last_updated &&
-                new Date(currentStock.last_updated).toLocaleString()}
-            </Typography>
-          </Grid>
-        </Grid>
+
+          <Divider className="mb-5" />
+          <Typography variant="h6" gutterBottom>
+            Beers to add to the round
+          </Typography>
+          <Divider className="mb-5" />
+          <FormControl fullWidth>
+            <InputLabel id="demo-simple-select-label">
+              Beer selection
+            </InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={beerSelected ? beerSelected.id : ""}
+              label="Select Beer"
+              onChange={handleChange}
+            >
+              {currentStock &&
+                currentStock.beers &&
+                currentStock.beers.map((beer) => (
+                  <MenuItem
+                    key={beer.id + "-menu-item"}
+                    value={beer.id.toString()}
+                  >
+                    {beer.name} - Price: ${beer.price_per_unit} - Available:{" "}
+                    {beer.quantity}
+                  </MenuItem>
+                ))}
+            </Select>
+          </FormControl>
+          <Button
+            variant="contained"
+            endIcon={<AddShoppingCartIcon />}
+            className="mt-10 mb-10"
+            onClick={addBeerToRound}
+          >
+            Add beer to round
+          </Button>
+          <Typography variant="h6" gutterBottom>
+            Current round details
+          </Typography>
+          <Divider className="mb-5" />
+          <CurrentRoundTable />
+          <Button
+            variant="contained"
+            endIcon={<SaveIcon />}
+            className="mt-10 mb-10"
+            onClick={saveCurrentRound}
+            disabled={isSaveRoundDisabled}
+          >
+            Save the current round
+          </Button>
+          <Divider className="mb-5" />
+          <RoundInOrderTable />
+          <Link href="/">Back to main</Link>
+          <Button
+            onClick={createOrderApi}
+            variant="contained"
+            disabled={isMakeOrderDisabled}
+            className="mt-10 mb-10 ml-56"
+          >
+            Make order
+          </Button>
+          <MessageApp
+            message={currentMessageDetails.currentMessage || ""}
+            severity={currentMessageDetails.severity}
+            onClose={() => setMessageOpen(false)}
+            open={currentMessageDetails.open}
+          />
+        </>
       )}
-      <Divider className="mb-5" />
-      <Typography variant="h6" gutterBottom>
-        Beers to add to the round
-      </Typography>
-      <Divider className="mb-5" />
-      <FormControl fullWidth>
-        <InputLabel id="demo-simple-select-label">Beer selection</InputLabel>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={beerSelected ? beerSelected.id : ""}
-          label="Select Beer"
-          onChange={handleChange}
-        >
-          {currentStock &&
-            currentStock.beers &&
-            currentStock.beers.map((beer) => (
-              <MenuItem key={beer.id + "-menu-item"} value={beer.id.toString()}>
-                {beer.name} - Price: ${beer.price_per_unit} - Available:{" "}
-                {beer.quantity}
-              </MenuItem>
-            ))}
-        </Select>
-      </FormControl>
-      <Button
-        variant="contained"
-        endIcon={<AddShoppingCartIcon />}
-        className="mt-10 mb-10"
-        onClick={addBeerToRound}
-      >
-        Add beer to round
-      </Button>
-      <Typography variant="h6" gutterBottom>
-        Current round details
-      </Typography>
-      <Divider className="mb-5" />
-      <CurrentRoundTable />
-      <Button
-        variant="contained"
-        endIcon={<SaveIcon />}
-        className="mt-10 mb-10"
-        onClick={saveCurrentRound}
-        disabled={isSaveRoundDisabled}
-      >
-        Save the current round
-      </Button>
-      <Divider className="mb-5" />
-      <RoundInOrderTable />
-      <Button
-        onClick={createOrderApi}
-        variant="contained"
-        disabled={isMakeOrderDisabled}
-        className="mt-10 mb-10"
-      >
-        Make order
-      </Button>
-      <MessageApp
-        message={currentMessageDetails.currentMessage || ""}
-        severity={currentMessageDetails.severity}
-        onClose={() => setMessageOpen(false)}
-        open={currentMessageDetails.open}
-      />
     </section>
   );
 };
