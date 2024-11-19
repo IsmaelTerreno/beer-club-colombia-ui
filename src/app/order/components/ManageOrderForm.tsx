@@ -48,9 +48,7 @@ import {
 import TopInfoSkeleton from "@/app/order/components/TopInfoSkeleton";
 import Link from "next/link";
 
-interface SelectBeerProps {}
-
-const ManageOrderForm: React.FC<SelectBeerProps> = () => {
+const ManageOrderForm: React.FC = () => {
   const dispatch = useAppDispatch();
   const [createOrder, resultCreateOrder] = useCreateOrderMutation();
   const {
@@ -59,7 +57,7 @@ const ManageOrderForm: React.FC<SelectBeerProps> = () => {
     isLoading: isLoadingStock,
   } = useGetLastStockQuery() as {
     data?: { data: Stock };
-    error?: any;
+    error?: object;
     isLoading: boolean;
   };
   useEffect(() => {

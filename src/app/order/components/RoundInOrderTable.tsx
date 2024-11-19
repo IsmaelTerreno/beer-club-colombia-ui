@@ -40,9 +40,7 @@ const RoundInOrderTable: React.FC = () => {
                     sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                   >
                     <TableCell>
-                      <Typography variant="h6">
-                        {roundItem.created_at}
-                      </Typography>
+                      <Typography variant="h6">{roundItem.created}</Typography>
                     </TableCell>
                     <TableCell>
                       <Typography variant="h6">
